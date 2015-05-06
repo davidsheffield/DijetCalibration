@@ -11,6 +11,7 @@
 #include "TObject.h"
 #include "Rtypes.h"
 #include "TArrayD.h"
+#include "TFitResult.h"
 
 #include <map>
 #include <vector>
@@ -148,6 +149,10 @@ public:
 	return fDoCandTrackEnergyDiff;
     }
 
+    void SetResolution(Double_t);
+    void SetResolution(TH1D*);
+    Double_t GetResolution() const;
+
 private:
     // calculate the balance parameter and its resolution for a given dijet pair
     void GetBalance(const DijetRespCorrDatum& datum, const TArrayD& respcorr,
@@ -172,6 +177,8 @@ private:
     Double_t fEcalRes, fHcalRes, fHfRes;
 
     Bool_t fDoCandTrackEnergyDiff;
+
+    Double_t fResolution;
 
     ClassDef(DijetRespCorrData, 1);
 };

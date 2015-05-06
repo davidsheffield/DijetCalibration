@@ -490,6 +490,8 @@ int main(int argc, char *argv[])
 
     //return 0;
 
+    data.SetResolution(1.0);
+
     TH1D *hist = data.doFit("h_corr", "Response Corrections");
     hist->GetXaxis()->SetTitle("i_{#eta}");
     hist->GetYaxis()->SetTitle("response corrections");

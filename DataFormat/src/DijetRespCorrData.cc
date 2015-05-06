@@ -301,6 +301,24 @@ Int_t DijetRespCorrData::GetSize(void) const
     return fData.size();
 }
 
+void DijetRespCorrData::SetResolution(Double_t v)
+{
+    fResolution = v;
+    return;
+}
+
+void DijetRespCorrData::SetResolution(TH1D* v)
+{
+    TFitResultPtr balance_fit = v->Fit("gaus","S");
+    fResolution = balance_fit->Parameter(2);
+    return;
+}
+
+Double_t DijetRespCorrData::GetResolution() const
+{
+    return fResolution;
+}
+
 Double_t DijetRespCorrData::GetLikelihoodDistance(const TArrayD& respcorr) const
 {
     Double_t total=0.0;
@@ -442,7 +460,7 @@ void DijetRespCorrData::GetBalance(const DijetRespCorrDatum& datum,
     Double_t petcorr = std::sqrt(ppx*ppx + ppy*ppy);
 
     balance_ = 2.0*(tetcorr-petcorr)/(tetcorr+petcorr);
-    resolution_ = 0.237/sqrt(datum.GetWeight()); //0.035
+    resolution_ = fResolution/sqrt(datum.GetWeight());
     return;
 }
 
