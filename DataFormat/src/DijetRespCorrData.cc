@@ -51,6 +51,11 @@ Double_t DijetRespCorrDatum::GetTagEcalE(void) const
     return fTagEcalE;
 }
 
+Double_t DijetRespCorrDatum::GetTagGenE() const
+{
+    return fTagGenE;
+}
+
 Double_t DijetRespCorrDatum::GetProbeEta(void) const
 {
     return fProbeEta;
@@ -76,6 +81,11 @@ void DijetRespCorrDatum::GetProbeHcalE(std::map<Int_t, Double_t>& m) const
 Double_t DijetRespCorrDatum::GetProbeEcalE(void) const
 {
     return fProbeEcalE;
+}
+
+Double_t DijetRespCorrDatum::GetProbeGenE() const
+{
+    return fProbeGenE;
 }
 
 Double_t DijetRespCorrDatum::GetThirdJetPx(void) const
@@ -131,6 +141,12 @@ void DijetRespCorrDatum::SetTagEcalE(Double_t v)
     return;
 }
 
+void DijetRespCorrDatum::SetTagGenE(Double_t v)
+{
+    fTagGenE = v;
+    return;
+}
+
 void DijetRespCorrDatum::SetProbeEta(Double_t v)
 {
     fProbeEta = v;
@@ -160,6 +176,12 @@ void DijetRespCorrDatum::AddProbeHcalE(Double_t v, Int_t ieta)
 void DijetRespCorrDatum::SetProbeEcalE(Double_t v)
 {
     fProbeEcalE = v;
+    return;
+}
+
+void DijetRespCorrDatum::SetProbeGenE(Double_t v)
+{
+    fProbeGenE = v;
     return;
 }
 

@@ -48,11 +48,13 @@ public:
     Double_t GetTagHcalE(Int_t ieta);
     void     GetTagHcalE(std::map<Int_t, Double_t>&) const;
     Double_t GetTagEcalE(void) const;
+    Double_t GetTagGenE() const;
     Double_t GetProbeEta(void) const;
     Double_t GetProbePhi(void) const;
     Double_t GetProbeHcalE(Int_t ieta);
     void     GetProbeHcalE(std::map<Int_t, Double_t>&) const;
     Double_t GetProbeEcalE(void) const;
+    Double_t GetProbeGenE() const;
     Double_t GetThirdJetPx(void) const;
     Double_t GetThirdJetPy(void) const;
     Int_t    GetCandTrackN(void) const;
@@ -63,11 +65,13 @@ public:
     void SetTagHcalE(Double_t, Int_t ieta);
     void AddTagHcalE(Double_t, Int_t ieta);
     void SetTagEcalE(Double_t);
+    void SetTagGenE(Double_t);
     void SetProbeEta(Double_t);
     void SetProbePhi(Double_t);
     void SetProbeHcalE(Double_t, Int_t ieta);
     void AddProbeHcalE(Double_t, Int_t ieta);
     void SetProbeEcalE(Double_t);
+    void SetProbeGenE(Double_t);
     void SetThirdJetPx(Double_t);
     void SetThirdJetPy(Double_t);
     void SetCandTrackN(Int_t);
@@ -95,11 +99,13 @@ private:
     Double_t fTagEta, fTagPhi;
     std::map<Int_t, Double_t> fTagHcalE;
     Double_t fTagEcalE;
+    Double_t fTagGenE;
 
     // probe jet info
     Double_t fProbeEta, fProbePhi;
     std::map<Int_t, Double_t> fProbeHcalE;
     Double_t fProbeEcalE;
+    Double_t fProbeGenE;
 
     // third jet info
     Double_t fThirdJetPx, fThirdJetPy;
