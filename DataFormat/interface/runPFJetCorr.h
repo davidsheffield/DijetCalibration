@@ -9,9 +9,12 @@
 #include "TH1D.h"
 //#include "TSystem.h"
 //#include "TROOT.h"
+#include "TMath.h"
 
 #include "HcalClosureTest/DataFormat/src/DijetRespCorrData.cc"
 
 double getNeutralPUCorr(double, int, double, bool);
+TH1D* LogXTH1D(const char* name, const char* title, Int_t nbinsx, Double_t xlow,
+	       Double_t xup);
 
 #endif

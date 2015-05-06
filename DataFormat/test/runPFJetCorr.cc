@@ -330,6 +330,8 @@ int main(int argc, char *argv[])
 				256, -0.5, 255.5);
     int fails = 0;
 
+    TH1D *h_weights = LogXTH1D("h_weights","weights",200,1.0e-12,1.1);
+
     int nEvents = tree->GetEntries();
     cout << "Running over " << nEvents << " events" << endl;
     //nEvents = 5;
@@ -338,6 +340,8 @@ int main(int argc, char *argv[])
 	    cout << "Processing event " << iEvent << endl;
 	}
 	tree->GetEntry(iEvent);
+
+	h_weights->Fill(weight_);
 
 	int passSel = 0;
 
@@ -494,6 +498,7 @@ int main(int argc, char *argv[])
     fout->cd();
     hist->Write();
     h_PassSel_->Write();
+    h_weights->Write();
     fout->Close();
 
     cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
@@ -629,4 +634,18 @@ double getNeutralPUCorr(double eta, int intNPV, double area, bool isMC_)
     double ECorr = pt_density*area*cosh(eta);
 
     return ECorr;
+}
+
+TH1D* LogXTH1D(const char* name, const char* title, Int_t nbinsx,
+	       Double_t xlow, Double_t xup)
+{
+    Double_t logxlow = TMath::Log10(xlow);
+    Double_t logxup = TMath::Log10(xup);
+    Double_t binwidth = (logxup - logxlow)/nbinsx;
+    Double_t xbins[nbinsx+1];
+    for (int i=0; i<=nbinsx; ++i) {
+	xbins[i] = TMath::Power(10,logxlow + i*binwidth);
+    }
+    TH1D *histogram = new TH1D(name, title, nbinsx, xbins);
+    return histogram;
 }
