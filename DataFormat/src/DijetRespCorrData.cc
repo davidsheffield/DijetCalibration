@@ -319,6 +319,46 @@ Double_t DijetRespCorrData::GetResolution() const
     return fResolution;
 }
 
+void DijetRespCorrData::GetPlots(TH1D *h_respcorr, TH1D *h_balance)
+{
+    Double_t array[NUMTOWERS];
+    for(int i=0; i<NUMTOWERS; ++i){
+	array[i] = h_respcorr->GetBinContent(i+1);
+    }
+    TArrayD respcorr;
+    respcorr.Set(NUMTOWERS, array);
+
+    for (std::vector<DijetRespCorrDatum>::const_iterator it=fData.begin();
+	 it!=fData.end(); ++it) {
+	Double_t te, th, thf;
+	Double_t pe, ph, phf;
+	it->GetTagEnergies(respcorr, te, th, thf);
+	it->GetProbeEnergies(respcorr, pe, ph, phf);
+
+	// calculate the resolution and balance in E_T, not E
+	Double_t tet=(te+th+thf)/std::cosh(it->GetTagEta());
+	Double_t pet=(pe+ph+phf)/std::cosh(it->GetProbeEta());
+
+	// correct the tag/probe E_T's for the "third jet"
+	Double_t tpx = tet*std::cos(it->GetTagPhi());
+	Double_t tpy = tet*std::sin(it->GetTagPhi());
+	Double_t ppx = pet*std::cos(it->GetProbePhi());
+	Double_t ppy = pet*std::sin(it->GetProbePhi());
+
+	tpx += 0.5*it->GetThirdJetPx();
+	tpy += 0.5*it->GetThirdJetPy();
+	ppx += 0.5*it->GetThirdJetPx();
+	ppy += 0.5*it->GetThirdJetPy();
+
+	Double_t tetcorr = std::sqrt(tpx*tpx + tpy*tpy);
+	Double_t petcorr = std::sqrt(ppx*ppx + ppy*ppy);
+
+	h_balance->Fill(2.0*(tetcorr - petcorr)/(tetcorr + petcorr));
+    }
+
+    return;
+}
+
 Double_t DijetRespCorrData::GetLikelihoodDistance(const TArrayD& respcorr) const
 {
     Double_t total=0.0;

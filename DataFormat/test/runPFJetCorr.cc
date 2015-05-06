@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 	+ to_string(static_cast<int>(maxDeltaEta_)) + "p" + to_string(decimal)
 	+ "_sumEt-" + to_string(static_cast<int>(minSumJetEt_)) + "_3rdEt-"
 	+ to_string(static_cast<int>(maxThirdJetEt_)) + "_1fb-1.root";
+    //output = "test.root";
 
     DijetRespCorrData data;
 
@@ -334,7 +335,7 @@ int main(int argc, char *argv[])
 
     int nEvents = tree->GetEntries();
     cout << "Running over " << nEvents << " events" << endl;
-    //nEvents = 5;
+    //nEvents = 100000;
     for (int iEvent=0; iEvent<nEvents; ++iEvent) {
 	if (iEvent % 10000 == 0) {
 	    cout << "Processing event " << iEvent << endl;
@@ -490,7 +491,15 @@ int main(int argc, char *argv[])
 
     //return 0;
 
-    data.SetResolution(1.0);
+    TH1D *h_respcorr_init = new TH1D("h_respcorr_init",
+				     "responce corrections of 1",
+				     83, -41.5, 41.5);
+    for(int i=1; i<84; ++i){
+	h_respcorr_init->SetBinContent(i, 1.0);
+    }
+    TH1D *h_balance = new TH1D("h_balance", "dijet balance", 200, -2.0, 2.0);
+    data.GetPlots(h_respcorr_init, h_balance);
+    data.SetResolution(h_balance);
 
     TH1D *hist = data.doFit("h_corr", "Response Corrections");
     hist->GetXaxis()->SetTitle("i_{#eta}");
@@ -501,6 +510,7 @@ int main(int argc, char *argv[])
     hist->Write();
     h_PassSel_->Write();
     h_weights->Write();
+    h_balance->Write();
     fout->Close();
 
     cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
