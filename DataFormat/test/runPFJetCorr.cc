@@ -386,6 +386,7 @@ int main(int argc, char *argv[])
 	float sumt = 0;
 	datum.SetTagEta(tjet_eta_);
 	datum.SetTagPhi(tjet_phi_);
+	datum.SetTagGenE(tjet_genE_);
 	for (int i = 0; i < tjet_ntwrs_; ++i) {
 	    if (tjet_twr_hade_->at(i) > 0.0
 		&& (tjet_twr_clusterind_->at(i) < 0
@@ -429,6 +430,7 @@ int main(int argc, char *argv[])
 	float sump = 0;
 	datum.SetProbeEta(pjet_eta_);
 	datum.SetProbePhi(pjet_phi_);
+	datum.SetProbeGenE(pjet_genE_);
 	for (int i=0; i<pjet_ntwrs_; ++i) {
 	    if (pjet_twr_hade_->at(i) > 0.0
 		&& (pjet_twr_clusterind_->at(i) < 0
