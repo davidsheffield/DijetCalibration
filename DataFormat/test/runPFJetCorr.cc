@@ -332,6 +332,8 @@ int main(int argc, char *argv[])
     int fails = 0;
 
     TH1D *h_weights = LogXTH1D("h_weights","weights",200,1.0e-12,1.1);
+    h_weights->GetXaxis()->SetTitle("weight");
+    h_weights->GetYaxis()->SetTitle("events");
 
     int nEvents = tree->GetEntries();
     cout << "Running over " << nEvents << " events" << endl;
