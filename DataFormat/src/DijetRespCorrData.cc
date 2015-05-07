@@ -352,6 +352,12 @@ void DijetRespCorrData::GetPlots(TH1D *h_respcorr, TH1D *h_balance,
     TArrayD respcorr;
     respcorr.Set(NUMTOWERS, array);
 
+    h_balance->GetXaxis()->SetTitle("dijet balance");
+    h_Eratio_vs_Eta->GetXaxis()->SetTitle("PFJet #eta");
+    h_Eratio_vs_Eta->GetYaxis()->SetTitle("E_{reco}/E_{gen}");
+    h_balance_term_vs_weight->GetXaxis()->SetTitle("w");
+    h_balance_term_vs_weight->GetYaxis()->SetTitle("B^{2}/(#DeltaB)^{2}");
+
     for (std::vector<DijetRespCorrDatum>::const_iterator it=fData.begin();
 	 it!=fData.end(); ++it) {
 	Double_t te, th, thf;

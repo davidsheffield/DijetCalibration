@@ -504,7 +504,7 @@ int main(int argc, char *argv[])
 				     "E_{reco}/E_{gen} vs. #eta",
 				     200, -5.0, 5.0, 200, 0.0, 2.0);
     TH2D *h_balance_term_vs_weight = LogXLogYTH2D("h_balance_term_vs_weight",
-						  "B^2/(#DeltaB)^2 vs weight",
+						  "B^{2}/(#DeltaB)^{2} vs weight",
 						  200, 1.0e-7, 1.01,
 						  200, 1.0e-7, 1.0e2);
     data.SetResolution(0.384);
