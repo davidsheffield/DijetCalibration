@@ -158,7 +158,7 @@ public:
     void SetResolution(Double_t);
     void SetResolution(TH1D*);
     Double_t GetResolution() const;
-    void GetPlots(TH1D*, TH1D*);
+    void GetPlots(TH1D*, TH1D*, TH2D*);
 
 private:
     // calculate the balance parameter and its resolution for a given dijet pair

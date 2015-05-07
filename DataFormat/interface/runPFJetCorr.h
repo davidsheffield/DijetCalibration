@@ -7,6 +7,7 @@
 #include "TFile.h"
 #include "TChain.h"
 #include "TH1D.h"
+#include "TH2D.h"
 //#include "TSystem.h"
 //#include "TROOT.h"
 #include "TMath.h"

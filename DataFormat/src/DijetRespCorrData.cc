@@ -341,7 +341,8 @@ Double_t DijetRespCorrData::GetResolution() const
     return fResolution;
 }
 
-void DijetRespCorrData::GetPlots(TH1D *h_respcorr, TH1D *h_balance)
+void DijetRespCorrData::GetPlots(TH1D *h_respcorr, TH1D *h_balance,
+				 TH2D *h_Eratio_vs_Eta)
 {
     Double_t array[NUMTOWERS];
     for(int i=0; i<NUMTOWERS; ++i){
@@ -375,7 +376,13 @@ void DijetRespCorrData::GetPlots(TH1D *h_respcorr, TH1D *h_balance)
 	Double_t tetcorr = std::sqrt(tpx*tpx + tpy*tpy);
 	Double_t petcorr = std::sqrt(ppx*ppx + ppy*ppy);
 
-	h_balance->Fill(2.0*(tetcorr - petcorr)/(tetcorr + petcorr));
+	h_balance->Fill(2.0*(tetcorr - petcorr)/(tetcorr + petcorr),
+			it->GetWeight());
+
+	Double_t tag_Eratio = (te + th + thf)/it->GetTagGenE();
+	Double_t probe_Eratio = (pe + ph + phf)/it->GetProbeGenE();
+	h_Eratio_vs_Eta->Fill(it->GetTagEta(), tag_Eratio, it->GetWeight());
+	h_Eratio_vs_Eta->Fill(it->GetProbeEta(), probe_Eratio, it->GetWeight());
     }
 
     return;

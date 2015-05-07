@@ -498,7 +498,10 @@ int main(int argc, char *argv[])
 	h_respcorr_init->SetBinContent(i, 1.0);
     }
     TH1D *h_balance = new TH1D("h_balance", "dijet balance", 200, -2.0, 2.0);
-    data.GetPlots(h_respcorr_init, h_balance);
+    TH2D *h_Eratio_vs_Eta = new TH2D("h_Eratio_vs_Eta",
+				     "E_{reco}/E_{gen} vs. #eta",
+				     200, -5.0, 5.0, 200, 0.0, 2.0);
+    data.GetPlots(h_respcorr_init, h_balance, h_Eratio_vs_Eta);
     data.SetResolution(h_balance);
 
     TH1D *hist = data.doFit("h_corr", "Response Corrections");
@@ -511,6 +514,7 @@ int main(int argc, char *argv[])
     h_PassSel_->Write();
     h_weights->Write();
     h_balance->Write();
+    h_Eratio_vs_Eta->Write();
     fout->Close();
 
     cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
