@@ -17,5 +17,7 @@
 double getNeutralPUCorr(double, int, double, bool);
 TH1D* LogXTH1D(const char* name, const char* title, Int_t nbinsx, Double_t xlow,
 	       Double_t xup);
+TH2D* LogXLogYTH2D(const char*, const char*, Int_t, Double_t, Double_t,
+		   Int_t, Double_t, Double_t);
 
 #endif

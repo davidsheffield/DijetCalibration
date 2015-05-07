@@ -503,7 +503,13 @@ int main(int argc, char *argv[])
     TH2D *h_Eratio_vs_Eta = new TH2D("h_Eratio_vs_Eta",
 				     "E_{reco}/E_{gen} vs. #eta",
 				     200, -5.0, 5.0, 200, 0.0, 2.0);
-    data.GetPlots(h_respcorr_init, h_balance, h_Eratio_vs_Eta);
+    TH2D *h_balance_term_vs_weight = LogXLogYTH2D("h_balance_term_vs_weight",
+						  "B^2/(#DeltaB)^2 vs weight",
+						  200, 1.0e-7, 1.01,
+						  200, 1.0e-7, 1.0e2);
+    data.SetResolution(0.384);
+    data.GetPlots(h_respcorr_init, h_balance, h_Eratio_vs_Eta,
+		  h_balance_term_vs_weight);
     data.SetResolution(h_balance);
 
     TH1D *hist = data.doFit("h_corr", "Response Corrections");
@@ -517,6 +523,7 @@ int main(int argc, char *argv[])
     h_weights->Write();
     h_balance->Write();
     h_Eratio_vs_Eta->Write();
+    h_balance_term_vs_weight->Write();
     fout->Close();
 
     cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
@@ -665,5 +672,27 @@ TH1D* LogXTH1D(const char* name, const char* title, Int_t nbinsx,
 	xbins[i] = TMath::Power(10,logxlow + i*binwidth);
     }
     TH1D *histogram = new TH1D(name, title, nbinsx, xbins);
+    return histogram;
+}
+
+TH2D *LogXLogYTH2D(const char* name, const char* title,
+		   Int_t nbinsx, Double_t xlow, Double_t xup,
+		   Int_t nbinsy, Double_t ylow, Double_t yup)
+{
+    Double_t logxlow = TMath::Log10(xlow);
+    Double_t logxup = TMath::Log10(xup);
+    Double_t xbinwidth = (logxup - logxlow)/nbinsx;
+    Double_t xbins[nbinsx+1];
+    for (int i=0; i<=nbinsx; ++i) {
+	xbins[i] = TMath::Power(10,logxlow + i*xbinwidth);
+    }
+    Double_t logylow = TMath::Log10(ylow);
+    Double_t logyup = TMath::Log10(yup);
+    Double_t ybinwidth = (logyup - logylow)/nbinsy;
+    Double_t ybins[nbinsy+1];
+    for (int i=0; i<=nbinsy; ++i) {
+	ybins[i] = TMath::Power(10,logylow + i*ybinwidth);
+    }
+    TH2D *histogram = new TH2D(name, title, nbinsx, xbins, nbinsy, ybins);
     return histogram;
 }
