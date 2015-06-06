@@ -1,4 +1,4 @@
-#include "HcalClosureTest/DataFormat/interface/runPFJetCorr.h"
+#include "DijetCalibration/RespCorrAlgos/interface/runPFJetCorr.h"
 
 using namespace std;
 

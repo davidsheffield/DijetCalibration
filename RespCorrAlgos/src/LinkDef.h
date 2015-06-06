@@ -1,5 +1,5 @@
-#include "HcalClosureTest/DataFormat/interface/DijetRespCorrData.h"
- 
+#include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrData.h"
+
 #ifdef __CINT__
 #pragma link off all globals;
 #pragma link off all classes;

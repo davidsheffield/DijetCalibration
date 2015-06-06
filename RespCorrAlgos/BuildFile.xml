@@ -1,4 +1,3 @@
-<use   name="DataFormats/CaloTowers"/>
 <use   name="root"/>
 <use   name="rootminuit"/>
 <export>

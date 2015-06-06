@@ -1,5 +1,5 @@
 //
-// CalcRespCorrDiJets.cc
+// DiJetNtuplizer.cc
 //
 //   description: Calculation of dijet response corrections
 //
@@ -9,9 +9,9 @@
 //
 //
 
-#include "HcalClosureTest/Analyzers/interface/CalcRespCorrDiJets.h"
+#include "DijetCalibration/Analyzers/interface/DiJetNtuplizer.h"
 
-CalcRespCorrDiJets::CalcRespCorrDiJets(const edm::ParameterSet& iConfig)
+DiJetNtuplizer::DiJetNtuplizer(const edm::ParameterSet& iConfig)
 {
   // set parameters
   pfJetCollName_       = iConfig.getParameter<std::string>("pfJetCollName");
@@ -44,18 +44,18 @@ CalcRespCorrDiJets::CalcRespCorrDiJets(const edm::ParameterSet& iConfig)
   tok_Vertex_    = consumes<reco::VertexCollection>(pvCollName_);
 }
 
-CalcRespCorrDiJets::~CalcRespCorrDiJets()
+DiJetNtuplizer::~DiJetNtuplizer()
 {
 }
-  
+
 //
 // member functions
 //
-  
+
 // ------------ method called to for each event  ------------
 void
-CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evSetup)
-{ 
+DiJetNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& evSetup)
+{
   edm::Handle<std::vector<reco::GenJet>> genjets;
   edm::Handle<std::vector<reco::GenParticle> > genparticles;
   if(doGenJets_){
@@ -90,11 +90,11 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
   // Run over PFJets
 
   //unsigned int debugEvent = 0;
-    
+
     pf_Run_ = iEvent.id().run();
     pf_Lumi_ = iEvent.id().luminosityBlock();
     pf_Event_ = iEvent.id().event();
-    
+
     // Get PFJets
     edm::Handle<reco::PFJetCollection> pfjets;
     iEvent.getByToken(tok_PFJet_,pfjets);
@@ -112,7 +112,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	<< " could not find HBHERecHit named " << hbheRecHitName_ << ".\n";
       return;
     }
-    
+
     // Get RecHits in HF
     edm::Handle<edm::SortedCollection<HFRecHit,edm::StrictWeakOrdering<HFRecHit>>> hfreco;
     iEvent.getByToken(tok_HF_,hfreco);
@@ -138,7 +138,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
     const CaloSubdetectorGeometry *HEGeom = geoHandle->getSubdetectorGeometry(DetId::Hcal, 2);
     const CaloSubdetectorGeometry *HOGeom = geoHandle->getSubdetectorGeometry(DetId::Hcal, 3);
     const CaloSubdetectorGeometry *HFGeom = geoHandle->getSubdetectorGeometry(DetId::Hcal, 4);
-    
+
     int HBHE_n = 0;
     for(edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>::const_iterator ith=hbhereco->begin(); ith!=hbhereco->end(); ++ith){
       HBHE_n++;
@@ -164,15 +164,15 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
     for(std::vector<reco::Vertex>::const_iterator it=pv->begin(); it!=pv->end(); ++it){
       if(!it->isFake() && it->ndof() > 4) ++pf_NPV_;
     }
-    
+
     // Get jet corrections
     // Uncomment below
     const JetCorrector* correctorPF = JetCorrector::getJetCorrector(pfJetCorrName_,evSetup);
-    
+
     //////////////////////////////
     // Event Selection
     //////////////////////////////
-    
+
     // determine which cut results in failure
     int passSelPF=0;
 
@@ -200,21 +200,21 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	pf_thirdjet_py_ += jet.scale()*jet.jet()->py();
       }
     }
-    
+
     if(pf_tag.jet() && pf_probe.jet()){
     // require that the first two jets are above some minimum,
     // and the rest are below some maximum
       if((pf_tag.jet()->et()+pf_probe.jet()->et())<minSumJetEt_) passSelPF |= 0x1;
       if(pf_tag.jet()->et()<minJetEt_ || pf_probe.jet()->et()<minJetEt_) passSelPF |= 0x2;
       if(sqrt(pf_thirdjet_px_*pf_thirdjet_px_ + pf_thirdjet_py_*pf_thirdjet_py_)>maxThirdJetEt_) passSelPF |= 0x4;
-      
+
       // force the tag jet to have the smaller |eta|
       if(std::fabs(pf_tag.jet()->eta())>std::fabs(pf_probe.jet()->eta())) {
 	JetCorretPair temp=pf_tag;
 	pf_tag=pf_probe;
 	pf_probe=temp;
       }
-      
+
       // eta cuts
       double dAbsEta=std::fabs(std::fabs(pf_tag.jet()->eta())-std::fabs(pf_probe.jet()->eta()));
       if(dAbsEta>maxDeltaEta_) passSelPF |= 0x8;
@@ -224,7 +224,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
     else{
       passSelPF = 0x40;
     }
-    
+
     h_PassSelPF_->Fill(passSelPF);
     if(passSelPF) return;
       // dump
@@ -317,7 +317,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
       std::map<int,std::pair<int,std::set<float>>> ppfjet_rechits;
       std::map<float,int> tpfjet_clusters;
       std::map<float,int> ppfjet_clusters;
-      
+
       // fill tag jet variables
       tpfjet_pt_    = pf_tag.jet()->pt();
       tpfjet_p_     = pf_tag.jet()->p();
@@ -367,11 +367,11 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
       /*      if(iEvent.id().event() == debugEvent){
 	std::cout << "Tag eta: " << tpfjet_eta_ << " phi: " << tpfjet_phi_ << std::endl;
 	}*/
-      
+
       /////////////////////////////////////////////
       // Get PF constituents and fill HCAL towers
       /////////////////////////////////////////////
-      
+
       // Get tag PFCandidates
       std::vector<reco::PFCandidatePtr> tagconst=pf_tag.jet()->getPFConstituents();
       for(std::vector<reco::PFCandidatePtr>::const_iterator it=tagconst.begin(); it!=tagconst.end(); ++it){
@@ -416,7 +416,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      tpfjet_had_E_mctruth_.push_back(genE);
 	      tpfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    reco::TrackRef trackRef = (*it)->trackRef();
 	    if(trackRef.isNonnull()){
 	      reco::Track track = *trackRef;
@@ -469,7 +469,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	    tpfjet_had_candtrackind_.push_back(-1);
 	    tpfjet_had_ntwrs_.push_back(0);
 	    tpfjet_had_n_++;
-	    
+
 	    if(doGenJets_){
 	      float gendr = 99999;
 	      float genE = 0;
@@ -487,7 +487,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      tpfjet_had_E_mctruth_.push_back(genE);
 	      tpfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    break;
 	  }
 	case reco::PFCandidate::h_HF:
@@ -502,7 +502,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	    tpfjet_had_candtrackind_.push_back(-1);
 	    tpfjet_had_ntwrs_.push_back(0);
 	    tpfjet_had_n_++;
-	    
+
 	    if(doGenJets_){
 	      float gendr = 99999;
 	      float genE = 0;
@@ -520,7 +520,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      tpfjet_had_E_mctruth_.push_back(genE);
 	      tpfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    break;
 	  }
 	case reco::PFCandidate::egamma_HF:
@@ -553,11 +553,11 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      tpfjet_had_E_mctruth_.push_back(genE);
 	      tpfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    break;
 	  }
 	}
-	
+
 	std::map<int,int> twrietas;
 	float HFHAD_E = 0;
 	float HFEM_E = 0;
@@ -586,12 +586,12 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 		int cluster_ind = tpfjet_clusters[cluster_dR];
 
 		std::vector<std::pair<DetId,float>> hitsAndFracs = cluster.hitsAndFractions();
-		
+
 		// Run over hits and match
 		int nHits = hitsAndFracs.size();
 		for(int iHit=0; iHit<nHits; iHit++){
 		  int etaPhiPF = getEtaPhi(hitsAndFracs[iHit].first);
-		  
+
 		  for(edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>::const_iterator ith=hbhereco->begin(); ith!=hbhereco->end(); ++ith){
 		    int etaPhiRecHit = getEtaPhi((*ith).id());
 		    if(etaPhiPF == etaPhiRecHit){
@@ -654,7 +654,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 		} // Loop over hits
 	      } // Test if element is from HCAL
 	      else if(elements[iEle].type() == reco::PFBlockElement::HFHAD){ // Element is HF
-		
+
 		for(edm::SortedCollection<HFRecHit,edm::StrictWeakOrdering<HFRecHit>>::const_iterator ith=hfreco->begin(); ith!=hfreco->end(); ++ith){
 		  if((*ith).id().depth() == 1) continue; // Remove long fibers
 		  const CaloCellGeometry *thisCell = HFGeom->getGeometry((*ith).id().rawId());
@@ -908,7 +908,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      ppfjet_had_E_mctruth_.push_back(genE);
 	      ppfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    reco::TrackRef trackRef = (*it)->trackRef();
 	    if(trackRef.isNonnull()){
 	      reco::Track track = *trackRef;
@@ -979,7 +979,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      ppfjet_had_E_mctruth_.push_back(genE);
 	      ppfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    break;
 	  }
 	case reco::PFCandidate::h_HF:
@@ -994,7 +994,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	    ppfjet_had_candtrackind_.push_back(-1);
 	    ppfjet_had_ntwrs_.push_back(0);
 	    ppfjet_had_n_++;
-	    
+
 	    if(doGenJets_){
 	      float gendr = 99999;
 	      float genE = 0;
@@ -1012,7 +1012,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      ppfjet_had_E_mctruth_.push_back(genE);
 	      ppfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    break;
 	  }
 	case reco::PFCandidate::egamma_HF:
@@ -1045,7 +1045,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	      ppfjet_had_E_mctruth_.push_back(genE);
 	      ppfjet_had_mcpdgId_.push_back(genpdgId);
 	    }
-	    
+
 	    break;
 	  }
 	}
@@ -1145,7 +1145,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 		  if((*ith).id().depth() == 1) continue; // Remove long fibers
 		  const CaloCellGeometry *thisCell = HFGeom->getGeometry((*ith).id().rawId());
 		  const CaloCellGeometry::CornersVec& cv = thisCell->getCorners();
-		  
+
 		  bool passMatch = false;
 		  if((*it)->eta() < cv[0].eta() && (*it)->eta() > cv[2].eta()){
 		    if((*it)->phi() < cv[0].phi() && (*it)->phi() > cv[2].phi()) passMatch = true;
@@ -1154,7 +1154,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 		      else if((*it)->phi() > cv[2].phi()) passMatch = true;
 		    }
 		  }
-		  
+
 		  if(passMatch){
 		    ppfjet_had_ntwrs_.at(ppfjet_had_n_ - 1)++;
 		    ppfjet_twr_ieta_.push_back((*ith).id().ieta());
@@ -1174,15 +1174,15 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 		    ++ppfjet_ntwrs_;
 		    HFHAD_E += (*ith).energy();
 		  }
-		}		
+		}
 	      }
 	      else if(elements[iEle].type() == reco::PFBlockElement::HFEM){ // Element is HF
-		
+
 		for(edm::SortedCollection<HFRecHit,edm::StrictWeakOrdering<HFRecHit>>::const_iterator ith=hfreco->begin(); ith!=hfreco->end(); ++ith){
 		  if((*ith).id().depth() == 2) continue; // Remove short fibers
 		  const CaloCellGeometry *thisCell = HFGeom->getGeometry((*ith).id().rawId());
 		  const CaloCellGeometry::CornersVec& cv = thisCell->getCorners();
-		  
+
 		  bool passMatch = false;
 		  if((*it)->eta() < cv[0].eta() && (*it)->eta() > cv[2].eta()){
 		    if((*it)->phi() < cv[0].phi() && (*it)->phi() > cv[2].phi()) passMatch = true;
@@ -1191,7 +1191,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 		      else if((*it)->phi() > cv[2].phi()) passMatch = true;
 		    }
 		  }
-		  
+
 		  if(passMatch){
 		    ppfjet_had_ntwrs_.at(ppfjet_had_n_ - 1)++;
 		    ppfjet_twr_ieta_.push_back((*ith).id().ieta());
@@ -1296,7 +1296,7 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
       }
       ppfjet_EMfrac_ = 1.0 - probe_had_rawHcalE/(probe_had_rawHcalE + probe_had_EcalE + ppfjet_unkown_E_ + ppfjet_electron_E_ + ppfjet_muon_E_ + ppfjet_photon_E_);
       ppfjet_hadEcalEfrac_ = probe_had_EcalE/(probe_had_rawHcalE + probe_had_EcalE + ppfjet_unkown_E_ + ppfjet_electron_E_ + ppfjet_muon_E_ + ppfjet_photon_E_);
-      
+
       if(doGenJets_){
 	// fill genjet tag/probe variables
 	tpfjet_gendr_ = 99999.;
@@ -1323,22 +1323,22 @@ CalcRespCorrDiJets::analyze(const edm::Event& iEvent, const edm::EventSetup& evS
 	  }
 	}
       }
-      
+
       // fill dijet variables
       pf_dijet_deta_=std::fabs(std::fabs(pf_tag.jet()->eta())-std::fabs(pf_probe.jet()->eta()));
       pf_dijet_dphi_=pf_tag.jet()->phi()-pf_probe.jet()->phi();
       if(pf_dijet_dphi_>3.1415) pf_dijet_dphi_ = 6.2832-pf_dijet_dphi_;
       pf_dijet_balance_ = (tpfjet_pt_-ppfjet_pt_)/(tpfjet_pt_+ppfjet_pt_);
-      
+
       tree_->Fill();
-    
-  
-  
+
+
+
   return;
 }
 
 // ------------ method called once each job just before starting event loop  ------------
-void CalcRespCorrDiJets::beginJob()
+void DiJetNtuplizer::beginJob()
 {
   // book histograms
   rootfile_ = new TFile(rootHistFilename_.c_str(), "RECREATE");
@@ -1510,16 +1510,16 @@ void CalcRespCorrDiJets::beginJob()
   tree_->Branch("pf_Lumi",&pf_Lumi_, "pf_Lumi/I");
   tree_->Branch("pf_Event",&pf_Event_, "pf_Event/I");
   tree_->Branch("pf_NPV",&pf_NPV_, "pf_NPV/I");
-  if(doGenJets_){    
+  if(doGenJets_){
     tree_->Branch("pf_weight",&pf_weight_, "pf_weight/F");
   }
 
   return;
-}  
+}
 
 // ------------ method called once each job just after ending the event loop  ------------
-void 
-CalcRespCorrDiJets::endJob() {
+void
+DiJetNtuplizer::endJob() {
   // write histograms
   rootfile_->cd();
 
@@ -1532,7 +1532,7 @@ CalcRespCorrDiJets::endJob() {
 
 // helper function
 
-double CalcRespCorrDiJets::deltaR(const reco::Jet* j1, const reco::Jet* j2)
+double DiJetNtuplizer::deltaR(const reco::Jet* j1, const reco::Jet* j2)
 {
   double deta = j1->eta()-j2->eta();
   double dphi = std::fabs(j1->phi()-j2->phi());
@@ -1540,7 +1540,7 @@ double CalcRespCorrDiJets::deltaR(const reco::Jet* j1, const reco::Jet* j2)
   return std::sqrt(deta*deta + dphi*dphi);
 }
 
-double CalcRespCorrDiJets::deltaR(const double eta1, const double phi1, const double eta2, const double phi2)
+double DiJetNtuplizer::deltaR(const double eta1, const double phi1, const double eta2, const double phi2)
 {
   double deta = eta1 - eta2;
   double dphi = std::fabs(phi1 - phi2);
@@ -1548,16 +1548,16 @@ double CalcRespCorrDiJets::deltaR(const double eta1, const double phi1, const do
   return std::sqrt(deta*deta + dphi*dphi);
 }
 
-int CalcRespCorrDiJets::getEtaPhi(const DetId id)
+int DiJetNtuplizer::getEtaPhi(const DetId id)
 {
   return id.rawId() & 0x3FFF; // Get 14 least-significant digits
 }
 
-int CalcRespCorrDiJets::getEtaPhi(const HcalDetId id)
+int DiJetNtuplizer::getEtaPhi(const HcalDetId id)
 {
   return id.rawId() & 0x3FFF; // Get 14 least-significant digits
 }
 
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(CalcRespCorrDiJets);
+DEFINE_FWK_MODULE(DiJetNtuplizer);

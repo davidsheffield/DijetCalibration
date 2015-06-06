@@ -1,8 +1,8 @@
-#ifndef _HCALCLOSURETEST_ANALYZERS_CALCRESPCORRDIJETS_H_
-#define _HCALCLOSURETEST_ANALYZERS_CALCRESPCORRDIJETS_H_
+#ifndef _DIJETCALIBRATION_ANALYZERS_DIJETNTUPLIZER_H_
+#define _DIJETCALIBRATION_ANALYZERS_DIJETNTUPLIZER_H_
 
 //
-// CalcRespCorrDiJets.h
+// DiJetNtuplizer.h
 //
 //    description: Makes plots to calculate the response correction using dijets.
 //
@@ -86,21 +86,20 @@ class JetCorretPair : protected std::pair<const reco::PFJet*, double> {
   inline void scale(double d) { second=d; return; }
 
  private:
-  
 };
 
-class CalcRespCorrDiJets : public edm::EDAnalyzer {
+class DiJetNtuplizer : public edm::EDAnalyzer {
  public:
-  explicit CalcRespCorrDiJets(const edm::ParameterSet&);
-  ~CalcRespCorrDiJets();
-  
-  
+  explicit DiJetNtuplizer(const edm::ParameterSet&);
+  ~DiJetNtuplizer();
+
+
  private:
   virtual void beginJob();//(const edm::EventSetup&);
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob();
 
-  
+
   // parameters
   bool debug_;                      // print debug statements
   std::string pfJetCollName_;       // label for the PF jet collection
@@ -125,7 +124,7 @@ class CalcRespCorrDiJets : public edm::EDAnalyzer {
   edm::EDGetTokenT<reco::PFJetCollection>           tok_PFJet_;
   edm::EDGetTokenT<std::vector<reco::GenJet> >      tok_GenJet_;
   edm::EDGetTokenT<std::vector<reco::GenParticle> > tok_GenPart_;
-  edm::EDGetTokenT<GenEventInfoProduct>             tok_GenEvInfo_; 
+  edm::EDGetTokenT<GenEventInfoProduct>             tok_GenEvInfo_;
   edm::EDGetTokenT<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit> > > tok_HBHE_;
   edm::EDGetTokenT<edm::SortedCollection<HFRecHit,edm::StrictWeakOrdering<HFRecHit> > >     tok_HF_;
   edm::EDGetTokenT<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit> > >     tok_HO_;

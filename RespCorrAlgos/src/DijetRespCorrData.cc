@@ -1,4 +1,4 @@
-#include "HcalClosureTest/DataFormat/interface/DijetRespCorrData.h"
+#include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrData.h"
 
 #include "TMinuit.h"
 #include "TMath.h"
