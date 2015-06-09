@@ -1,4 +1,4 @@
-#include "DijetCalibration/RespCorrAlgos/interface/runPFJetCorr.h"
+#include "DijetCalibration/RespCorrAlgos/bin/getRespCorr.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	} else if (atoi(argv[1]) == 0) {
 	    isMC = false;
 	} else {
-	    cout << " Usage: runPFJetCorr isMC dEta leadingEt 3rdEt" <<
+	    cout << " Usage: getRespCorr isMC dEta leadingEt 3rdEt" <<
 		endl;
 	    return 1;
 	}
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	maxThirdJetEt_ = atof(argv[4]);
     } else {
 	cout << "Not right number of arguments." << endl;
-	cout << " Usage: runPFJetCorr isMC dEta sumEt 3rdEt" << endl;
+	cout << " Usage: getRespCorr isMC dEta sumEt 3rdEt" << endl;
 	return 1;
     }
 
