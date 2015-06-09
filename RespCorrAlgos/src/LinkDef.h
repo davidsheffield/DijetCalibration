@@ -1,3 +1,4 @@
+#include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrDatum.h"
 #include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrData.h"
 
 #ifdef __CINT__

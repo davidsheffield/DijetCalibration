@@ -12,6 +12,7 @@
 //#include "TROOT.h"
 #include "TMath.h"
 
+#include "DijetCalibration/RespCorrAlgos/src/DijetRespCorrDatum.cc"
 #include "DijetCalibration/RespCorrAlgos/src/DijetRespCorrData.cc"
 
 double getNeutralPUCorr(double, int, double, bool);
