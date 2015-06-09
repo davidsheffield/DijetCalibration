@@ -16,21 +16,17 @@ process.load('JetMETCorrections.Configuration.JetCorrectionProducers_cff')
 
 # run over files
 
-process.calcrespcorrdijets.rootHistFilename = cms.string('tree.root')
+process.calcrespcorrdijets.rootHistFilename = cms.string('dijet_balance_ntuple.root')
 #process.calcrespcorrdijets.doCaloJets = cms.bool(False)
 #process.calcrespcorrdijets.doPFJets = cms.bool(False)
 #process.calcrespcorrdijets.doGenJets = cms.bool(False)
 #process.calcrespcorrdijets.debug = cms.untracked.bool(True)
-#process.calcrespcorrdijets.maxDeltaEta = cms.double(0.5)
+#process.calcrespcorrdijets.maxDeltaEta = cms.double(1.5)
 #process.calcrespcorrdijets.minJetEt = cms.double(20.0)
 #process.calcrespcorrdijets.minSumJetEt = cms.double(50.0)
 #process.calcrespcorrdijets.maxThirdJetEt = cms.double(100.0)
 
-import FWCore.Utilities.FileUtils as FileUtils
-readFiles = cms.untracked.vstring(FileUtils.loadListFromFile('files.list'))
-process.source = cms.Source("PoolSource", fileNames=readFiles)
-
-print readFiles
+process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring())
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.MessageLogger.cerr.FwkReport.reportEvery=cms.untracked.int32(100)
