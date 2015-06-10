@@ -12,8 +12,9 @@
 //#include "TROOT.h"
 #include "TMath.h"
 
-#include "DijetCalibration/RespCorrAlgos/src/DijetRespCorrDatum.cc"
-#include "DijetCalibration/RespCorrAlgos/src/DijetRespCorrData.cc"
+#include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrDatum.h"
+#include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrData.h"
+#include "DijetCalibration/RespCorrAlgos/interface/DijetTree.h"
 
 double getNeutralPUCorr(double, int, double, bool);
 TH1D* LogXTH1D(const char* name, const char* title, Int_t nbinsx, Double_t xlow,
