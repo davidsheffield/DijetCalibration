@@ -4,6 +4,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    int debug = 0;
+
     bool isMC = false;
     float maxDeltaEta_ = 0.5;
     float minSumJetEt_ = 50.0;
@@ -11,22 +13,30 @@ int main(int argc, char *argv[])
     float maxThirdJetEt_ = 15.0;
 
     cout << argc << endl;
-    if (argc == 5) {
-	if (atoi(argv[1]) == 1) {
+    if (argc > 1) {
+	if (atoi(argv[1]) == 1)
 	    isMC = true;
-	} else if (atoi(argv[1]) == 0) {
+	else if (atoi(argv[1]) == 0)
 	    isMC = false;
-	} else {
-	    cout << " Usage: getRespCorr isMC dEta leadingEt 3rdEt" <<
+	else {
+	    cout << " Usage: getRespCorr isMC dEta leadingEt 3rdEt [debug]" <<
 		endl;
 	    return 1;
 	}
+    }
+    if (argc > 2)
 	maxDeltaEta_ = atof(argv[2]);
+    if (argc > 3)
 	minSumJetEt_ = atof(argv[3]);
-	maxThirdJetEt_ = atof(argv[4]);
-    } else {
-	cout << "Not right number of arguments." << endl;
-	cout << " Usage: getRespCorr isMC dEta sumEt 3rdEt" << endl;
+    if (argc > 4)
+	minJetEt_ = atof(argv[4]);
+    if (argc > 5)
+	maxThirdJetEt_ = atof(argv[5]);
+    if (argc > 6)
+	debug = atoi(argv[6]);
+    if (argc > 7) {
+	cout << "Too many arguments." << endl;
+	cout << " Usage: getRespCorr isMC dEta sumEt 3rdEt [debug]" << endl;
 	return 1;
     }
 
@@ -38,6 +48,8 @@ int main(int argc, char *argv[])
     TChain *tree = new TChain("dijettree");
 
     TString input = "/eos/uscms/store/user/dgsheffi/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-75/afdb1fa6d9e6b5be9d47dda947717251/tree_*.root";
+    if (debug & 0x1)
+	input = "/uscms_data/d1/dgsheffi/HCal/tree.root";
     cout << "Opening file: " << input << endl;
     tree->Add(input);
     cout << "File opened." << endl;
@@ -50,7 +62,8 @@ int main(int argc, char *argv[])
 	+ to_string(static_cast<int>(maxDeltaEta_)) + "p" + to_string(decimal)
 	+ "_sumEt-" + to_string(static_cast<int>(minSumJetEt_)) + "_3rdEt-"
 	+ to_string(static_cast<int>(maxThirdJetEt_)) + "_1fb-1.root";
-    //output = "test.root";
+    if (debug & 0x1)
+	output = "test.root";
 
     DijetRespCorrData data;
 
@@ -66,7 +79,6 @@ int main(int argc, char *argv[])
 
     cout << data.GetSize() << " data" << endl;
 
-    //cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
     cout << "Do CandTrack? " << data.GetDoCandTrackEnergyDiff() << endl;
     data.SetDoCandTrackEnergyDiff(false);
     cout << "Do CandTrack? " << data.GetDoCandTrackEnergyDiff() << endl;
@@ -92,13 +104,17 @@ int main(int argc, char *argv[])
 		  h_balance_term_vs_weight);
     data.SetResolution(h_balance);
 
-    TH1D *hist = data.doFit("h_corr", "Response Corrections");
-    hist->GetXaxis()->SetTitle("i_{#eta}");
-    hist->GetYaxis()->SetTitle("response corrections");
+    TH1D *hist = 0;
+    if (debug & 0x2) {
+	hist = data.doFit("h_corr", "Response Corrections");
+	hist->GetXaxis()->SetTitle("i_{#eta}");
+	hist->GetYaxis()->SetTitle("response corrections");
+    }
 
     TFile *fout = new TFile(output, "RECREATE");
     fout->cd();
-    hist->Write();
+    if (debug & 0x2)
+	hist->Write();
     h_PassSel->Write();
     h_weights->Write();
     h_balance->Write();
@@ -106,7 +122,6 @@ int main(int argc, char *argv[])
     h_balance_term_vs_weight->Write();
     fout->Close();
 
-    //cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
     cout << "Events that passed cuts: " << h_PassSel->GetBinContent(1) << endl;
 
     return 0;
