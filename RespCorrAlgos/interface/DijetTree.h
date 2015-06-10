@@ -7,7 +7,7 @@
 //#include <TROOT.h>
 #include "TChain.h"
 #include "TFile.h"
-//#include <TH2.h>
+#include "TH1D.h"
 //#include <TStyle.h>
 //#include <TCanvas.h>
 
@@ -339,11 +339,11 @@ public :
 
    DijetTree(TTree *tree=0, bool MC=false);
    virtual ~DijetTree();
-   virtual Int_t    Cut(Long64_t entry);
+   virtual Int_t    Cut();
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop(DijetRespCorrData *data);
+   virtual void     Loop(DijetRespCorrData*, TH1D*);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual Double_t GetNeutralPUCorr(Double_t, Double_t);

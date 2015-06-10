@@ -387,7 +387,7 @@ void DijetTree::SetCuts(Double_t maxDeltaEta_, Double_t minSumJetEt_,
     return;
 }
 
-Int_t DijetTree::Cut(Long64_t entry)
+Int_t DijetTree::Cut()
 {
 // This function may be called from Loop.
 // returns  0 if entry is accepted.
@@ -544,31 +544,14 @@ Double_t DijetTree::GetNeutralPUCorr(Double_t eta, Double_t area)
     return ECorr;
 }
 
-void DijetTree::Loop(DijetRespCorrData *data)
+void DijetTree::Loop(DijetRespCorrData *data, TH1D *h_PassSel)
 {
-//   In a ROOT session, you can do:
-//      root> .L DijetTree.C
-//      root> DijetTree t
-//      root> t.GetEntry(12); // Fill t data members with entry number 12
-//      root> t.Show();       // Show values of entry 12
-//      root> t.Show(16);     // Read and show values of entry 16
-//      root> t.Loop();       // Loop on all entries
-//
-
 //     This is the loop skeleton where:
 //    jentry is the global entry number in the chain
 //    ientry is the entry number in the current Tree
 //  Note that the argument to GetEntry must be:
 //    jentry for TChain::GetEntry
 //    ientry for TTree::GetEntry and TBranch::GetEntry
-//
-//       To read only selected branches, Insert statements like:
-// METHOD1:
-//    fChain->SetBranchStatus("*",0);  // disable all branches
-//    fChain->SetBranchStatus("branchname",1);  // activate branchname
-// METHOD2: replace line
-//    fChain->GetEntry(jentry);       //read all branches
-//by  b_branchname->GetEntry(ientry); //read only this branch
     if (fChain == 0) return;
 
     Long64_t nentries = fChain->GetEntriesFast();
@@ -583,8 +566,11 @@ void DijetTree::Loop(DijetRespCorrData *data)
 	if (ientry < 0) break;
 	nb = fChain->GetEntry(jentry);
 	nbytes += nb;
-	if (Cut(ientry))
+	int passSel = Cut();
+	if (passSel) {
+	    h_PassSel->Fill(passSel);
 	    continue;
+	}
 
 	DijetRespCorrDatum datum;
 
@@ -681,9 +667,12 @@ void DijetTree::Loop(DijetRespCorrData *data)
 	datum.SetThirdJetPy(thirdjet_py);
 
 	if (sumt == 0 || sump == 0) {
+	    passSel |= 0x200;
+	    h_PassSel->Fill(passSel);
 	    continue;
 	}
 
+	h_PassSel->Fill(passSel);
 	data->push_back(datum);
     }
 }

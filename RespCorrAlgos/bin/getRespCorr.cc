@@ -54,15 +54,15 @@ int main(int argc, char *argv[])
 
     DijetRespCorrData data;
 
-    TH1D *h_PassSel_ = new TH1D("h_PassSelection", "Selection Pass Failures",
-				256, -0.5, 255.5);
+    TH1D *h_PassSel = new TH1D("h_PassSelection", "Selection Pass Failures",
+			       256, -0.5, 255.5);
     TH1D *h_weights = LogXTH1D("h_weights","weights",200,1.0e-12,1.1);
     h_weights->GetXaxis()->SetTitle("weight");
     h_weights->GetYaxis()->SetTitle("events");
 
     DijetTree dijettree(tree);
     dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_, maxThirdJetEt_);
-    dijettree.Loop(&data);
+    dijettree.Loop(&data, h_PassSel);
 
     cout << data.GetSize() << " data" << endl;
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     TFile *fout = new TFile(output, "RECREATE");
     fout->cd();
     hist->Write();
-    h_PassSel_->Write();
+    h_PassSel->Write();
     h_weights->Write();
     h_balance->Write();
     h_Eratio_vs_Eta->Write();
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     fout->Close();
 
     //cout << "Passes: " << nEvents - fails << " Fails: " << fails << endl;
-    cout << "Events that passed cuts: " << h_PassSel_->GetBinContent(1) << endl;
+    cout << "Events that passed cuts: " << h_PassSel->GetBinContent(1) << endl;
 
     return 0;
 }
