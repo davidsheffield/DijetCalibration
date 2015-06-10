@@ -61,12 +61,8 @@ int main(int argc, char *argv[])
     h_weights->GetYaxis()->SetTitle("events");
 
     DijetTree dijettree(tree);
-    dijettree.SetCutMaxDelta(maxDeltaEta_);
-    dijettree.SetCutMinSumJetEt(minSumJetEt_);
-    dijettree.SetCutMinJetEt(minJetEt_);
-    dijettree.SetCutMaxThirdJetEt(maxThirdJetEt_);
+    dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_, maxThirdJetEt_);
     dijettree.Loop(&data);
-//loop
 
     cout << data.GetSize() << " data" << endl;
 

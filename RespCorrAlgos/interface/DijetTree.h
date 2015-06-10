@@ -347,10 +347,7 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual Double_t GetNeutralPUCorr(Double_t, Double_t);
-   virtual void     SetCutMaxDeltaEta(Double_t);
-   virtual void     SetCutMinSumJetEt(Double_t);
-   virtual void     SetCutMinJetEt(Double_t);
-   virtual void     SetCutMaxThirdJetEt(Double_t);
+   virtual void     SetCuts(Double_t, Double_t, Double_t, Double_t);
 
 private:
    bool isMC;

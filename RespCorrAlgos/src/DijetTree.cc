@@ -377,24 +377,14 @@ void DijetTree::Show(Long64_t entry)
     fChain->Show(entry);
 }
 
-void DijetTree::SetCutMaxDeltaEta(Double_t v)
+void DijetTree::SetCuts(Double_t maxDeltaEta_, Double_t minSumJetEt_,
+			Double_t minJetEt_, Double_t maxThirdJetEt_)
 {
-    cut_maxDeltaEta = v;
-}
-
-void DijetTree::SetCutMinSumJetEt(Double_t v)
-{
-    cut_minSumJetEt = v;
-}
-
-void DijetTree::SetCutMinJetEt(Double_t v)
-{
-    cut_minJetEt = v;
-}
-
-void DijetTree::SetCutMaxThirdJetEt(Double_t v)
-{
-    cut_maxThirdJetEt = v;
+    cut_maxDeltaEta   = maxDeltaEta_;
+    cut_minSumJetEt   = minSumJetEt_;
+    cut_minJetEt      = minJetEt_;
+    cut_maxThirdJetEt = maxThirdJetEt_;
+    return;
 }
 
 Int_t DijetTree::Cut(Long64_t entry)
