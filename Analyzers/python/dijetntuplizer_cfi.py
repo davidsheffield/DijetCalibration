@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-calcrespcorrdijets = cms.EDAnalyzer(
+dijetcalibration = cms.EDAnalyzer(
     'DiJetNtuplizer',
     pfJetCollName       = cms.string('ak4PFJetsCHS'),
     pfJetCorrName       = cms.string('ak4PFCHSL2L3'),
