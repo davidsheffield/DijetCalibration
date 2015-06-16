@@ -45,6 +45,13 @@ int main(int argc, char *argv[])
     cout << "sumEt: " << minSumJetEt_ << endl;
     cout << "3rdEt: " << maxThirdJetEt_ << endl;
 
+    TTree *param_tree = new TTree("Parameters", "Parameters");
+    param_tree->Branch("maxDeltaEta", &maxDeltaEta_, "maxDeltaEta/F");
+    param_tree->Branch("minSumJetEt", &minSumJetEt_, "minSumJetEt/F");
+    param_tree->Branch("minJetEt", &minJetEt_, "minJetEt/F");
+    param_tree->Branch("maxThirdJetEt", &maxThirdJetEt_, "maxThirdJetEt/F");
+    param_tree->Fill();
+
     TChain *tree = new TChain("dijettree");
 
     TString input = "/eos/uscms/store/user/dgsheffi/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-75/afdb1fa6d9e6b5be9d47dda947717251/tree_*.root";
@@ -105,7 +112,7 @@ int main(int argc, char *argv[])
     data.SetResolution(h_balance);
 
     TH1D *hist = 0;
-    if (debug & 0x2) {
+    if (!(debug & 0x2)) {
 	hist = data.doFit("h_corr", "Response Corrections");
 	hist->GetXaxis()->SetTitle("i_{#eta}");
 	hist->GetYaxis()->SetTitle("response corrections");
@@ -113,7 +120,8 @@ int main(int argc, char *argv[])
 
     TFile *fout = new TFile(output, "RECREATE");
     fout->cd();
-    if (debug & 0x2)
+    param_tree->Write();
+    if (!(debug & 0x2))
 	hist->Write();
     h_PassSel->Write();
     h_weights->Write();
