@@ -4,12 +4,10 @@
 #include <iostream>
 #include <vector>
 
-//#include <TROOT.h>
 #include "TChain.h"
 #include "TFile.h"
 #include "TH1D.h"
-//#include <TStyle.h>
-//#include <TCanvas.h>
+#include "TRandom3.h"
 
 #include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrData.h"
 #include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrDatum.h"
@@ -343,7 +341,7 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop(DijetRespCorrData*, TH1D*);
+   virtual void     Loop(DijetRespCorrData*, TH1D*, const int, const double);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual Double_t GetNeutralPUCorr(Double_t, Double_t);

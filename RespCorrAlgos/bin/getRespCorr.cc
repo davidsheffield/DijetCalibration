@@ -45,21 +45,14 @@ int main(int argc, char *argv[])
     cout << "sumEt: " << minSumJetEt_ << endl;
     cout << "3rdEt: " << maxThirdJetEt_ << endl;
 
+    int seed = 1;
     TTree *param_tree = new TTree("Parameters", "Parameters");
     param_tree->Branch("maxDeltaEta", &maxDeltaEta_, "maxDeltaEta/F");
     param_tree->Branch("minSumJetEt", &minSumJetEt_, "minSumJetEt/F");
     param_tree->Branch("minJetEt", &minJetEt_, "minJetEt/F");
     param_tree->Branch("maxThirdJetEt", &maxThirdJetEt_, "maxThirdJetEt/F");
+    param_tree->Branch("initial_seed", &seed, "initial_seed/I");
     param_tree->Fill();
-
-    TChain *tree = new TChain("dijettree");
-
-    TString input = "/eos/uscms/store/user/dgsheffi/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-75/afdb1fa6d9e6b5be9d47dda947717251/tree_*.root";
-    if (debug & 0x1)
-	input = "/uscms_data/d1/dgsheffi/HCal/tree.root";
-    cout << "Opening file: " << input << endl;
-    tree->Add(input);
-    cout << "File opened." << endl;
 
     int decimal = static_cast<int>(maxDeltaEta_*10)
 	          - static_cast<int>(maxDeltaEta_)*10;
@@ -80,9 +73,40 @@ int main(int argc, char *argv[])
     h_weights->GetXaxis()->SetTitle("weight");
     h_weights->GetYaxis()->SetTitle("events");
 
-    DijetTree dijettree(tree);
-    dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_, maxThirdJetEt_);
-    dijettree.Loop(&data, h_PassSel);
+    if (debug & 0x1) {
+	TString input = "/eos/uscms/store/user/dgsheffi/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_1_1_KKQ.root";
+	cout << "Opening file: " << input << endl;
+	TChain *tree = new TChain("dijettree");
+	tree->Add(input);
+	DijetTree dijettree(tree);
+	dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_,
+			  maxThirdJetEt_);
+	dijettree.Loop(&data, h_PassSel, 1, 1.0);
+    } else {
+	TString input[6] =
+{"/eos/uscms/store/user/dgsheffi/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
+ "/eos/uscms/store/user/dgsheffi/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
+ "/eos/uscms/store/user/dgsheffi/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
+ "/eos/uscms/store/user/dgsheffi/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
+ "/eos/uscms/store/user/dgsheffi/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
+ "/eos/uscms/store/user/dgsheffi/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root"};
+	double probability[6] = {1.0, 1.372714e-1, 2.805324e-2, 4.675765e-3,
+				 1.175536e-3, 9.256953e-5};
+	int sampledEvents = 0;
+	for (int i=0; i<6; ++i) {
+	    cout << "Opening " << input[i] << endl;
+	    TChain *tree = new TChain("dijettree");
+	    tree->Add(input[i]);
+	    DijetTree dijettree(tree);
+	    dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_,
+			      maxThirdJetEt_);
+	    dijettree.Loop(&data, h_PassSel, seed++, probability[i]);
+
+	    cout << (data.GetSize() - sampledEvents) << " events"
+		 << endl;
+	    sampledEvents = data.GetSize();
+	}
+    }
 
     cout << data.GetSize() << " data" << endl;
 

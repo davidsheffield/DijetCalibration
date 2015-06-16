@@ -544,7 +544,8 @@ Double_t DijetTree::GetNeutralPUCorr(Double_t eta, Double_t area)
     return ECorr;
 }
 
-void DijetTree::Loop(DijetRespCorrData *data, TH1D *h_PassSel)
+void DijetTree::Loop(DijetRespCorrData *data, TH1D *h_PassSel,
+		     const int seed, const double probability)
 {
 //     This is the loop skeleton where:
 //    jentry is the global entry number in the chain
@@ -557,11 +558,17 @@ void DijetTree::Loop(DijetRespCorrData *data, TH1D *h_PassSel)
     Long64_t nentries = fChain->GetEntriesFast();
     cout << "Running over " << nentries << " events" << endl;
 
+    TRandom3 rand;
+    rand.SetSeed(seed);
+
     Long64_t nbytes = 0, nb = 0;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
 	if (jentry % 10000 == 0) {
 	    cout << "Processing event " << jentry << endl;
 	}
+	if (rand.Rndm() > probability)
+	    continue;
+
 	Long64_t ientry = LoadTree(jentry);
 	if (ientry < 0) break;
 	nb = fChain->GetEntry(jentry);
