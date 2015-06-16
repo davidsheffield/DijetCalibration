@@ -54,6 +54,16 @@ int main(int argc, char *argv[])
     param_tree->Branch("initial_seed", &seed, "initial_seed/I");
     param_tree->Fill();
 
+    TTree *datasets_tree = new TTree("Datasets", "Datasets used");
+    TString dataset_name;
+    double dataset_prob;
+    int dataset_seed;
+    int dataset_events;
+    datasets_tree->Branch("name", &dataset_name, "name/C");
+    datasets_tree->Branch("probability", &dataset_prob, "probability/D");
+    datasets_tree->Branch("seed", &dataset_seed, "seed/I");
+    datasets_tree->Branch("events", &dataset_events, "events/I");
+
     int decimal = static_cast<int>(maxDeltaEta_*10)
 	          - static_cast<int>(maxDeltaEta_)*10;
     //TString output = "/uscms_data/d1/dgsheffi/HCal/corrections/QCD_Pt-120To170_dEta-"+to_string(static_cast<int>(maxDeltaEta_))+"p"+to_string(decimal)+"_Et-"+to_string(static_cast<int>(minJetEt_))+"_3rdEt-"+to_string(static_cast<int>(maxThirdJetEt_))+"_noNeutralPUcorr.root";
@@ -82,6 +92,12 @@ int main(int argc, char *argv[])
 	dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_,
 			  maxThirdJetEt_);
 	dijettree.Loop(&data, h_PassSel, 1, 1.0);
+
+	dataset_name = input;
+	dataset_prob = 1.0;
+	dataset_seed = 1;
+	dataset_events = data.GetSize();
+	datasets_tree->Fill();
     } else {
 	TString input[6] =
 {"/eos/uscms/store/user/dgsheffi/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
@@ -100,10 +116,15 @@ int main(int argc, char *argv[])
 	    DijetTree dijettree(tree);
 	    dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_,
 			      maxThirdJetEt_);
-	    dijettree.Loop(&data, h_PassSel, seed++, probability[i]);
+	    dijettree.Loop(&data, h_PassSel, seed, probability[i]);
 
-	    cout << (data.GetSize() - sampledEvents) << " events"
-		 << endl;
+	    dataset_name = input[i];
+	    dataset_prob = probability[i];
+	    dataset_seed = seed;
+	    dataset_events = data.GetSize() - sampledEvents;
+	    datasets_tree->Fill();
+
+	    ++seed;
 	    sampledEvents = data.GetSize();
 	}
     }
@@ -145,6 +166,7 @@ int main(int argc, char *argv[])
     TFile *fout = new TFile(output, "RECREATE");
     fout->cd();
     param_tree->Write();
+    datasets_tree->Write();
     if (!(debug & 0x2))
 	hist->Write();
     h_PassSel->Write();
