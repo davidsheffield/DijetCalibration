@@ -1,4 +1,4 @@
 <use name="DijetCalibration/RespCorrAlgos"/>
 <use name="root"/>
 <bin name="getRespCorr" file="getRespCorr.cc"/>
-
+<bin name="getPlots" file="getPlots.cc"/>
