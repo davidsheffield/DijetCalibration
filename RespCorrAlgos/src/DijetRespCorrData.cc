@@ -77,6 +77,7 @@ void DijetRespCorrData::SetPlotBalance(const TString name, const TString label,
 				       const Int_t nbinsx, const Double_t xlow,
 				       const Double_t xup)
 {
+    delete h_balance;
     h_balance = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -90,6 +91,7 @@ void DijetRespCorrData::SetPlotEratiovsEta(const TString name,
 					   const Double_t ylow,
 					   const Double_t yup)
 {
+    delete h_Eratio_vs_Eta;
     h_Eratio_vs_Eta = new TH2D(name, label, nbinsx, xlow, xup,
 			       nbinsy, ylow, yup);
     return;
@@ -99,6 +101,7 @@ void DijetRespCorrData::SetPlotEt(const TString name, const TString label,
 				  const Int_t nbinsx, const Double_t xlow,
 				  const Double_t xup)
 {
+    delete h_Et;
     h_Et = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -107,6 +110,7 @@ void DijetRespCorrData::SetPlotEta(const TString name, const TString label,
 				   const Int_t nbinsx, const Double_t xlow,
 				   const Double_t xup)
 {
+    delete h_Eta;
     h_Eta = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -115,6 +119,7 @@ void DijetRespCorrData::SetPlotPhi(const TString name, const TString label,
 				   const Int_t nbinsx, const Double_t xlow,
 				   const Double_t xup)
 {
+    delete h_Phi;
     h_Phi = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -123,6 +128,7 @@ void DijetRespCorrData::SetPlotDEta(const TString name, const TString label,
 				    const Int_t nbinsx, const Double_t xlow,
 				    const Double_t xup)
 {
+    delete h_dEta;
     h_dEta = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -131,6 +137,7 @@ void DijetRespCorrData::SetPlotDPhi(const TString name, const TString label,
 				    const Int_t nbinsx, const Double_t xlow,
 				    const Double_t xup)
 {
+    delete h_dPhi;
     h_dPhi = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -141,6 +148,7 @@ void DijetRespCorrData::SetPlotEt2overEt1(const TString name,
 					  const Double_t xlow,
 					  const Double_t xup)
 {
+    delete h_Et2_over_Et1;
     h_Et2_over_Et1 = new TH1D(name, label, nbinsx, xlow, xup);
     return;
 }
@@ -202,6 +210,17 @@ void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
 
     for (std::vector<DijetRespCorrDatum>::const_iterator it=fData.begin();
 	 it!=fData.end(); ++it) {
+	h_Eta->Fill(it->GetTagEta(), it->GetWeight());
+	h_Eta->Fill(it->GetProbeEta(), it->GetWeight());
+	h_Phi->Fill(it->GetTagPhi(), it->GetWeight());
+	h_Phi->Fill(it->GetProbePhi(), it->GetWeight());
+	h_dEta->Fill(fabs(fabs(it->GetTagEta()) - fabs(it->GetProbeEta())),
+		     it->GetWeight());
+	double dphi = fabs(it->GetTagPhi() - it->GetProbePhi());
+	if (dphi > 3.1415)
+	    dphi = 6.2832 - dphi;
+	h_dPhi->Fill(dphi, it->GetWeight());
+
 	Double_t te, th, thf;
 	Double_t pe, ph, phf;
 	it->GetTagEnergies(respcorr, te, th, thf);
@@ -210,6 +229,12 @@ void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
 	// calculate the resolution and balance in E_T, not E
 	Double_t tet=(te+th+thf)/std::cosh(it->GetTagEta());
 	Double_t pet=(pe+ph+phf)/std::cosh(it->GetProbeEta());
+	h_Et->Fill(tet, it->GetWeight());
+	h_Et->Fill(pet, it->GetWeight());
+	if (tet > pet)
+	    h_Et2_over_Et1->Fill(pet/tet);
+	else
+	    h_Et2_over_Et1->Fill(tet/pet);
 
 	// correct the tag/probe E_T's for the "third jet"
 	Double_t tpx = tet*std::cos(it->GetTagPhi());

@@ -94,6 +94,12 @@ int main(int argc, char *argv[])
     data.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
     data.SetPlotEratiovsEta("h_Eratio_vs_Eta", "E_{reco}/E_{gen} vs. #eta",
 			    200, -5.0, 5.0, 200, 0.0, 2.0);
+    data.SetPlotEt("h_Et", "E_{T}", 200, 0.0, 400.0);
+    data.SetPlotEta("h_Eta", "#eta", 200, -5.0, 5.0);
+    data.SetPlotPhi("h_Phi", "#phi", 200, -3.1416, 3.1416);
+    data.SetPlotDEta("h_dEta", "#Delta|#eta|", 200, 0.0, 1.5);
+    data.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
+    data.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}", 200, 0.0, 1.0);
 //    TH2D *h_balance_term_vs_weight = new TH2D("tmp", "tmp", 10, 0.0, 10.0,
 //					      10, 0.0, 10.0);
     data.GetPlots(h_respcorr_init);
@@ -101,11 +107,23 @@ int main(int argc, char *argv[])
 // 		  h_balance_term_vs_weight);
     TH1D *h_balance = data.GetPlotBalance();
     TH2D *h_Eratio_vs_Eta = data.GetPlotEratiovsEta();
+    TH1D *h_Et = data.GetPlotEt();
+    TH1D *h_Eta = data.GetPlotEta();
+    TH1D *h_Phi = data.GetPlotPhi();
+    TH1D *h_dEta = data.GetPlotDEta();
+    TH1D *h_dPhi = data.GetPlotDPhi();
+    TH1D *h_Et2_over_Et1 = data.GetPlotEt2overEt1();
 
     TFile *fout = new TFile(output_name, "RECREATE");
     fout->cd();
     h_balance->Write();
     h_Eratio_vs_Eta->Write();
+    h_Et->Write();
+    h_Eta->Write();
+    h_Phi->Write();
+    h_dEta->Write();
+    h_dPhi->Write();
+    h_Et2_over_Et1->Write();
     fout->Close();
 
     return 0;
