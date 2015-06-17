@@ -152,17 +152,17 @@ int main(int argc, char *argv[])
     for(int i=1; i<84; ++i){
 	h_respcorr_init->SetBinContent(i, 1.0);
     }
-    TH1D *h_balance = new TH1D("h_balance", "dijet balance", 200, -2.0, 2.0);
-    TH2D *h_Eratio_vs_Eta = new TH2D("h_Eratio_vs_Eta",
-				     "E_{reco}/E_{gen} vs. #eta",
-				     200, -5.0, 5.0, 200, 0.0, 2.0);
-    TH2D *h_balance_term_vs_weight = LogXLogYTH2D("h_balance_term_vs_weight",
-						  "B^{2}/(#DeltaB)^{2} vs weight",
-						  200, 1.0e-7, 1.01,
-						  200, 1.0e-7, 1.0e2);
+    data.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
+    data.SetPlotEratiovsEta("h_Eratio_vs_Eta", "E_{reco}/E_{gen} vs. #eta",
+			    200, -5.0, 5.0, 200, 0.0, 2.0);
+    // TH2D *h_balance_term_vs_weight = LogXLogYTH2D("h_balance_term_vs_weight",
+    // 						  "B^{2}/(#DeltaB)^{2} vs weight",
+    // 						  200, 1.0e-7, 1.01,
+    // 						  200, 1.0e-7, 1.0e2);
     data.SetResolution(0.384);
-    data.GetPlots(h_respcorr_init, h_balance, h_Eratio_vs_Eta,
-		  h_balance_term_vs_weight);
+    data.GetPlots(h_respcorr_init);
+    TH1D *h_balance = data.GetPlotBalance();
+    TH2D *h_Eratio_vs_Eta = data.GetPlotEratiovsEta();
     data.SetResolution(h_balance);
 
     TH1D *hist = 0;
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
     h_weights->Write();
     h_balance->Write();
     h_Eratio_vs_Eta->Write();
-    h_balance_term_vs_weight->Write();
+    //h_balance_term_vs_weight->Write();
     fout->Close();
 
     cout << "Events that passed cuts: " << h_PassSel->GetBinContent(1) << endl;

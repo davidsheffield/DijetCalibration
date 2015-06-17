@@ -24,6 +24,17 @@ DijetRespCorrData::DijetRespCorrData()
     fHfRes=1.35;
 
     fDoCandTrackEnergyDiff=false;
+
+    h_balance = new TH1D("h_balance", "", 1, 0.0, 1.0);
+    h_Eratio_vs_Eta = new TH2D("h_Eratio_vs_Eta", "", 1, 0.0, 1.0, 1, 0.0, 1.0);
+    h_balance_term_vs_weight = new TH2D("h_balance_term_vs_weight", "",
+					1, 0.0, 1.0, 1, 0.0, 1.0);
+    h_Et = new TH1D("h_Et", "", 1, 0.0, 1.0);
+    h_Eta = new TH1D("h_Eta", "", 1, 0.0, 1.0);
+    h_Phi = new TH1D("h_Phi", "", 1, 0.0, 1.0);
+    h_dEta = new TH1D("h_dEta", "", 1, 0.0, 1.0);
+    h_dPhi = new TH1D("h_dPhi", "", 1, 0.0, 1.0);
+    h_Et2_over_Et1 = new TH1D("h_Et2_over_Et1", "", 1, 0.0, 1.0);
 }
 
 DijetRespCorrData::~DijetRespCorrData() {}
@@ -62,9 +73,119 @@ Double_t DijetRespCorrData::GetResolution() const
     return fResolution;
 }
 
-void DijetRespCorrData::GetPlots(TH1D *h_respcorr, TH1D *h_balance,
-				 TH2D *h_Eratio_vs_Eta,
-				 TH2D *h_balance_term_vs_weight)
+void DijetRespCorrData::SetPlotBalance(const TString name, const TString label,
+				       const Int_t nbinsx, const Double_t xlow,
+				       const Double_t xup)
+{
+    h_balance = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotEratiovsEta(const TString name,
+					   const TString label,
+					   const Int_t nbinsx,
+					   const Double_t xlow,
+					   const Double_t xup,
+					   const Int_t nbinsy,
+					   const Double_t ylow,
+					   const Double_t yup)
+{
+    h_Eratio_vs_Eta = new TH2D(name, label, nbinsx, xlow, xup,
+			       nbinsy, ylow, yup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotEt(const TString name, const TString label,
+				  const Int_t nbinsx, const Double_t xlow,
+				  const Double_t xup)
+{
+    h_Et = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotEta(const TString name, const TString label,
+				   const Int_t nbinsx, const Double_t xlow,
+				   const Double_t xup)
+{
+    h_Eta = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotPhi(const TString name, const TString label,
+				   const Int_t nbinsx, const Double_t xlow,
+				   const Double_t xup)
+{
+    h_Phi = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotDEta(const TString name, const TString label,
+				    const Int_t nbinsx, const Double_t xlow,
+				    const Double_t xup)
+{
+    h_dEta = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotDPhi(const TString name, const TString label,
+				    const Int_t nbinsx, const Double_t xlow,
+				    const Double_t xup)
+{
+    h_dPhi = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+void DijetRespCorrData::SetPlotEt2overEt1(const TString name,
+					  const TString label,
+					  const Int_t nbinsx,
+					  const Double_t xlow,
+					  const Double_t xup)
+{
+    h_Et2_over_Et1 = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
+TH1D* DijetRespCorrData::GetPlotBalance()
+{
+    return h_balance;
+}
+
+TH2D* DijetRespCorrData::GetPlotEratiovsEta()
+{
+    return h_Eratio_vs_Eta;
+}
+
+TH1D* DijetRespCorrData::GetPlotEt()
+{
+    return h_Et;
+}
+
+TH1D* DijetRespCorrData::GetPlotEta()
+{
+    return h_Eta;
+}
+
+TH1D* DijetRespCorrData::GetPlotPhi()
+{
+    return h_Phi;
+}
+
+TH1D* DijetRespCorrData::GetPlotDEta()
+{
+    return h_dEta;
+}
+
+TH1D* DijetRespCorrData::GetPlotDPhi()
+{
+    return h_dPhi;
+}
+
+TH1D* DijetRespCorrData::GetPlotEt2overEt1()
+{
+    return h_Et2_over_Et1;
+}
+
+void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
 {
     Double_t array[NUMTOWERS];
     for(int i=0; i<NUMTOWERS; ++i){

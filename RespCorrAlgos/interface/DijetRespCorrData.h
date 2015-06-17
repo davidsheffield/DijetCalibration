@@ -12,6 +12,8 @@
 #include "Rtypes.h"
 #include "TArrayD.h"
 #include "TFitResult.h"
+#include "TH1D.h"
+#include "TH2D.h"
 
 #include <map>
 #include <vector>
@@ -69,7 +71,33 @@ public:
     void SetResolution(Double_t);
     void SetResolution(TH1D*);
     Double_t GetResolution() const;
-    void GetPlots(TH1D*, TH1D*, TH2D*, TH2D*);
+
+    void GetPlots(TH1D*);
+    void SetPlotBalance(const TString, const TString, const Int_t,
+			const Double_t, const Double_t);
+    void SetPlotEratiovsEta(const TString, const TString, const Int_t,
+			    const Double_t, const Double_t, const Int_t,
+			    const Double_t, const Double_t);
+    void SetPlotEt(const TString, const TString, const Int_t,
+		   const Double_t, const Double_t);
+    void SetPlotEta(const TString, const TString, const Int_t,
+		    const Double_t, const Double_t);
+    void SetPlotPhi(const TString, const TString, const Int_t,
+		    const Double_t, const Double_t);
+    void SetPlotDEta(const TString, const TString, const Int_t,
+		     const Double_t, const Double_t);
+    void SetPlotDPhi(const TString, const TString, const Int_t,
+		     const Double_t, const Double_t);
+    void SetPlotEt2overEt1(const TString, const TString, const Int_t,
+			   const Double_t, const Double_t);
+    TH1D* GetPlotBalance();
+    TH2D* GetPlotEratiovsEta();
+    TH1D* GetPlotEt();
+    TH1D* GetPlotEta();
+    TH1D* GetPlotPhi();
+    TH1D* GetPlotDEta();
+    TH1D* GetPlotDPhi();
+    TH1D* GetPlotEt2overEt1();
 
 private:
     // calculate the balance parameter and its resolution for a given dijet pair
@@ -97,6 +125,16 @@ private:
     Bool_t fDoCandTrackEnergyDiff;
 
     Double_t fResolution;
+
+    TH1D *h_balance;
+    TH2D *h_Eratio_vs_Eta;
+    TH2D *h_balance_term_vs_weight;
+    TH1D *h_Et;
+    TH1D *h_Eta;
+    TH1D *h_Phi;
+    TH1D *h_dEta;
+    TH1D *h_dPhi;
+    TH1D *h_Et2_over_Et1;
 
     ClassDef(DijetRespCorrData, 1);
 };
