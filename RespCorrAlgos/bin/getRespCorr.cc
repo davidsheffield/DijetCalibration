@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     float minSumJetEt_ = 50.0;
     float minJetEt_ = 25.0;
     float maxThirdJetEt_ = 15.0;
+    float maxAlpha_ = 1000.0;
 
     cout << argc << endl;
     if (argc > 1) {
@@ -19,8 +20,8 @@ int main(int argc, char *argv[])
 	else if (atoi(argv[1]) == 0)
 	    isMC = false;
 	else {
-	    cout << " Usage: getRespCorr isMC dEta leadingEt 3rdEt [debug]" <<
-		endl;
+	    cout << " Usage: getRespCorr isMC dEta sumEt Et 3rdEt alpha [debug]"
+		 << endl;
 	    return 1;
 	}
     }
@@ -33,10 +34,13 @@ int main(int argc, char *argv[])
     if (argc > 5)
 	maxThirdJetEt_ = atof(argv[5]);
     if (argc > 6)
-	debug = atoi(argv[6]);
-    if (argc > 7) {
+	maxAlpha_ = atof(argv[6]);
+    if (argc > 7)
+	debug = atoi(argv[7]);
+    if (argc > 8) {
 	cout << "Too many arguments." << endl;
-	cout << " Usage: getRespCorr isMC dEta sumEt 3rdEt [debug]" << endl;
+	cout << " Usage: getRespCorr isMC dEta sumEt Et 3rdEt alpha [debug]"
+	     << endl;
 	return 1;
     }
 
@@ -51,6 +55,7 @@ int main(int argc, char *argv[])
     param_tree->Branch("minSumJetEt", &minSumJetEt_, "minSumJetEt/F");
     param_tree->Branch("minJetEt", &minJetEt_, "minJetEt/F");
     param_tree->Branch("maxThirdJetEt", &maxThirdJetEt_, "maxThirdJetEt/F");
+    param_tree->Branch("maxAlpha", &maxAlpha_, "maxAlpha/F");
     param_tree->Branch("initial_seed", &seed, "initial_seed/I");
     param_tree->Fill();
 
@@ -64,14 +69,18 @@ int main(int argc, char *argv[])
     datasets_tree->Branch("seed", &dataset_seed, "seed/I");
     datasets_tree->Branch("events", &dataset_events, "events/I");
 
-    int decimal = static_cast<int>(maxDeltaEta_*10)
-	          - static_cast<int>(maxDeltaEta_)*10;
-    //TString output = "/uscms_data/d1/dgsheffi/HCal/corrections/QCD_Pt-120To170_dEta-"+to_string(static_cast<int>(maxDeltaEta_))+"p"+to_string(decimal)+"_Et-"+to_string(static_cast<int>(minJetEt_))+"_3rdEt-"+to_string(static_cast<int>(maxThirdJetEt_))+"_noNeutralPUcorr.root";
+    int decimal1 = static_cast<int>(maxDeltaEta_*10)
+	         - static_cast<int>(maxDeltaEta_)*10;
+    int decimal2 = static_cast<int>(maxAlpha_*10)
+	         - static_cast<int>(maxAlpha_)*10;
     TString output =
-	"/uscms_data/d1/dgsheffi/HCal/corrections/QCD_Pt-15to7000_dEta-"
-	+ to_string(static_cast<int>(maxDeltaEta_)) + "p" + to_string(decimal)
-	+ "_sumEt-" + to_string(static_cast<int>(minSumJetEt_)) + "_3rdEt-"
-	+ to_string(static_cast<int>(maxThirdJetEt_)) + "_1fb-1.root";
+	"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/corrections_dEta-"
+	+ to_string(static_cast<int>(maxDeltaEta_)) + "p" + to_string(decimal1)
+	+ "_sumEt-" + to_string(static_cast<int>(minSumJetEt_))
+	+ "_Et-" + to_string(static_cast<int>(minJetEt_))
+	+ "_3rdEt-" + to_string(static_cast<int>(maxThirdJetEt_))
+	+ "_alpha-" + to_string(static_cast<int>(maxAlpha_)) + "p"
+	+ to_string(decimal2) + ".root";
     if (debug & 0x1)
 	output = "test.root";
 
@@ -90,7 +99,7 @@ int main(int argc, char *argv[])
 	tree->Add(input);
 	DijetTree dijettree(tree);
 	dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_,
-			  maxThirdJetEt_);
+			  maxThirdJetEt_, maxAlpha_);
 	dijettree.Loop(&data, h_PassSel, 1, 1.0);
 
 	dataset_name = input;
@@ -115,7 +124,7 @@ int main(int argc, char *argv[])
 	    tree->Add(input[i]);
 	    DijetTree dijettree(tree);
 	    dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_,
-			      maxThirdJetEt_);
+			      maxThirdJetEt_, maxAlpha_);
 	    dijettree.Loop(&data, h_PassSel, seed, probability[i]);
 
 	    dataset_name = input[i];

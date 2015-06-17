@@ -378,12 +378,14 @@ void DijetTree::Show(Long64_t entry)
 }
 
 void DijetTree::SetCuts(Double_t maxDeltaEta_, Double_t minSumJetEt_,
-			Double_t minJetEt_, Double_t maxThirdJetEt_)
+			Double_t minJetEt_, Double_t maxThirdJetEt_,
+			Double_t maxAlpha_)
 {
     cut_maxDeltaEta   = maxDeltaEta_;
     cut_minSumJetEt   = minSumJetEt_;
     cut_minJetEt      = minJetEt_;
     cut_maxThirdJetEt = maxThirdJetEt_;
+    cut_maxAlpha      = maxAlpha_;
     return;
 }
 
@@ -402,8 +404,11 @@ Int_t DijetTree::Cut()
 	passSel |= 0x1;
     if (tjet_Et < cut_minJetEt || pjet_Et < cut_minJetEt)
 	passSel |= 0x2;
-    if (sqrt(thirdjet_px * thirdjet_px + thirdjet_py * thirdjet_py)
-	> cut_maxThirdJetEt)
+    float thirdjet_Et = sqrt(thirdjet_px * thirdjet_px
+			     + thirdjet_py * thirdjet_py);
+    if (thirdjet_Et > cut_maxThirdJetEt)
+	passSel |= 0x4;
+    if (2*thirdjet_Et/(tjet_Et + pjet_Et) > cut_maxAlpha)
 	passSel |= 0x4;
     if (dijet_deta > cut_maxDeltaEta)
 	passSel |= 0x8;
