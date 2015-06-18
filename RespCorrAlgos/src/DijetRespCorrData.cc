@@ -155,42 +155,42 @@ void DijetRespCorrData::SetPlotEt2overEt1(const TString name,
 
 TH1D* DijetRespCorrData::GetPlotBalance()
 {
-    return h_balance;
+    return static_cast<TH1D*>(h_balance->Clone());
 }
 
 TH2D* DijetRespCorrData::GetPlotEratiovsEta()
 {
-    return h_Eratio_vs_Eta;
+    return static_cast<TH2D*>(h_Eratio_vs_Eta->Clone());
 }
 
 TH1D* DijetRespCorrData::GetPlotEt()
 {
-    return h_Et;
+    return static_cast<TH1D*>(h_Et->Clone());
 }
 
 TH1D* DijetRespCorrData::GetPlotEta()
 {
-    return h_Eta;
+    return static_cast<TH1D*>(h_Eta->Clone());
 }
 
 TH1D* DijetRespCorrData::GetPlotPhi()
 {
-    return h_Phi;
+    return static_cast<TH1D*>(h_Phi->Clone());
 }
 
 TH1D* DijetRespCorrData::GetPlotDEta()
 {
-    return h_dEta;
+    return static_cast<TH1D*>(h_dEta->Clone());
 }
 
 TH1D* DijetRespCorrData::GetPlotDPhi()
 {
-    return h_dPhi;
+    return static_cast<TH1D*>(h_dPhi->Clone());
 }
 
 TH1D* DijetRespCorrData::GetPlotEt2overEt1()
 {
-    return h_Et2_over_Et1;
+    return static_cast<TH1D*>(h_Et2_over_Et1->Clone());
 }
 
 void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
