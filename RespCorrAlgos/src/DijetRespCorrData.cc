@@ -265,6 +265,53 @@ void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
     return;
 }
 
+double DijetRespCorrData::GetRespCorrScaleFactor(TH1D *h_respcorr)
+{
+    Double_t array[NUMTOWERS];
+    for(int i=0; i<NUMTOWERS; ++i){
+	array[i] = 1.0;
+    }
+    TArrayD respcorr;
+    respcorr.Set(NUMTOWERS, array);
+
+    double sum_nocorr = 0;
+    for (std::vector<DijetRespCorrDatum>::const_iterator it=fData.begin();
+	 it!=fData.end(); ++it) {
+	Double_t te, th, thf;
+	Double_t pe, ph, phf;
+	it->GetTagEnergies(respcorr, te, th, thf);
+	it->GetProbeEnergies(respcorr, pe, ph, phf);
+
+	// calculate the resolution and balance in E_T, not E
+	Double_t tet=(th+thf)/std::cosh(it->GetTagEta());
+	Double_t pet=(ph+phf)/std::cosh(it->GetProbeEta());
+	sum_nocorr += tet;
+	sum_nocorr += pet;
+    }
+
+    for(int i=0; i<NUMTOWERS; ++i){
+	array[i] = h_respcorr->GetBinContent(i+1);
+    }
+    respcorr.Set(NUMTOWERS, array);
+
+    double sum_respcorr = 0;
+    for (std::vector<DijetRespCorrDatum>::const_iterator it=fData.begin();
+	 it!=fData.end(); ++it) {
+	Double_t te, th, thf;
+	Double_t pe, ph, phf;
+	it->GetTagEnergies(respcorr, te, th, thf);
+	it->GetProbeEnergies(respcorr, pe, ph, phf);
+
+	// calculate the resolution and balance in E_T, not E
+	Double_t tet=(th+thf)/std::cosh(it->GetTagEta());
+	Double_t pet=(ph+phf)/std::cosh(it->GetProbeEta());
+	sum_respcorr += tet;
+	sum_respcorr += pet;
+    }
+
+    return sum_nocorr/sum_respcorr;
+}
+
 Double_t DijetRespCorrData::GetLikelihoodDistance(const TArrayD& respcorr) const
 {
     Double_t total=0.0;

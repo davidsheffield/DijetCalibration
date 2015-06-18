@@ -123,6 +123,9 @@ int main(int argc, char *argv[])
 	    h_respcorr->SetBinContent(i, 1.0);
     }
 
+    double factor = data.GetRespCorrScaleFactor(h_respcorr);
+    h_respcorr->Scale(factor);
+
     data.SetPlotBalance("h_balance_respcorr", "dijet balance", 200, -2.0, 2.0);
     data.SetPlotEratiovsEta("h_Eratio_vs_Eta_respcorr",
 			    "E_{reco}/E_{gen} vs. #eta",

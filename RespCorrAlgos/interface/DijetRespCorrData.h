@@ -71,6 +71,7 @@ public:
     void SetResolution(Double_t);
     void SetResolution(TH1D*);
     Double_t GetResolution() const;
+    double GetRespCorrScaleFactor(TH1D*);
 
     void GetPlots(TH1D*);
     void SetPlotBalance(const TString, const TString, const Int_t,
