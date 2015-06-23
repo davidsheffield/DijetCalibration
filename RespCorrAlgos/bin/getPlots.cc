@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     TH1D *h_respcorr_init = new TH1D("h_respcorr_init",
 				     "responce corrections of 1",
 				     83, -41.5, 41.5);
-    for(int i=1; i<84; ++i){
+    for (int i=1; i<84; ++i) {
 	h_respcorr_init->SetBinContent(i, 1.0);
     }
 
@@ -117,6 +117,17 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_sel_nocorr = data_selected.GetPlotDEta();
     TH1D *h_dPhi_sel_nocorr = data_selected.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_sel_nocorr = data_selected.GetPlotEt2overEt1();
+    TH1D *h_Eratio_all_sel_nocorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_sel_nocorr->ProjectionY("h_Eratio_all")->Clone());
+    TH1D *h_Eratio_HB_sel_nocorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_sel_nocorr->ProjectionY(
+	    "h_Eratio_HB", 74, 128)->Clone());
+    TH1D *h_Eratio_HE_sel_nocorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_sel_nocorr->ProjectionY(
+	    "h_Eratio_HE", 41, 73)->Clone());
+    h_Eratio_HE_sel_nocorr->Add(
+	static_cast<TH1D*>(h_Eratio_vs_Eta_sel_nocorr->ProjectionY(
+			       "", 129, 161)->Clone()));
 
     TH1D *h_respcorr;
     input->GetObject("h_corr", h_respcorr);
@@ -149,6 +160,17 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_sel_respcorr = data_selected.GetPlotDEta();
     TH1D *h_dPhi_sel_respcorr = data_selected.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_sel_respcorr = data_selected.GetPlotEt2overEt1();
+    TH1D *h_Eratio_all_sel_respcorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_sel_respcorr->ProjectionY("h_Eratio_all")->Clone());
+    TH1D *h_Eratio_HB_sel_respcorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_sel_respcorr->ProjectionY(
+	    "h_Eratio_HB", 74, 128)->Clone());
+    TH1D *h_Eratio_HE_sel_respcorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_sel_respcorr->ProjectionY(
+	    "h_Eratio_HE", 41, 73)->Clone());
+    h_Eratio_HE_sel_respcorr->Add(
+	static_cast<TH1D*>(h_Eratio_vs_Eta_sel_respcorr->ProjectionY(
+			       "", 129, 161)->Clone()));
 
     // Sampled events, no corrections
     data_sampled.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
@@ -171,6 +193,17 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_samp_nocorr = data_sampled.GetPlotDEta();
     TH1D *h_dPhi_samp_nocorr = data_sampled.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_samp_nocorr = data_sampled.GetPlotEt2overEt1();
+    TH1D *h_Eratio_all_samp_nocorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_samp_nocorr->ProjectionY("h_Eratio_all")->Clone());
+    TH1D *h_Eratio_HB_samp_nocorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_samp_nocorr->ProjectionY(
+	    "h_Eratio_HB", 74, 128)->Clone());
+    TH1D *h_Eratio_HE_samp_nocorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_samp_nocorr->ProjectionY(
+	    "h_Eratio_HE", 41, 73)->Clone());
+    h_Eratio_HE_samp_nocorr->Add(
+	static_cast<TH1D*>(h_Eratio_vs_Eta_samp_nocorr->ProjectionY(
+			       "", 129, 161)->Clone()));
 
     // Sampled events, with response corrections
     data_sampled.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
@@ -193,22 +226,36 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_samp_respcorr = data_sampled.GetPlotDEta();
     TH1D *h_dPhi_samp_respcorr = data_sampled.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_samp_respcorr = data_sampled.GetPlotEt2overEt1();
+    TH1D *h_Eratio_all_samp_respcorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_samp_respcorr->ProjectionY("h_Eratio_all")->Clone());
+    TH1D *h_Eratio_HB_samp_respcorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_samp_respcorr->ProjectionY(
+	    "h_Eratio_HB", 74, 128)->Clone());
+    TH1D *h_Eratio_HE_samp_respcorr = static_cast<TH1D*>(
+	h_Eratio_vs_Eta_samp_respcorr->ProjectionY(
+	    "h_Eratio_HE", 41, 73)->Clone());
+    h_Eratio_HE_samp_respcorr->Add(
+	static_cast<TH1D*>(h_Eratio_vs_Eta_samp_respcorr->ProjectionY(
+			       "", 129, 161)->Clone()));
 
     TFile *fout = new TFile(output_name, "RECREATE");
 
     TDirectory *dir_selected = fout->mkdir("Selected");
-    TDirectory *dir_selected_respcorr =
-	dir_selected->mkdir("Response_Corrections");
+    TDirectory *dir_selected_respcorr
+	= dir_selected->mkdir("Response_Corrections");
     TDirectory *dir_selected_nocorr = dir_selected->mkdir("No_Corrections");
 
     TDirectory *dir_sampled = fout->mkdir("Sampled");
-    TDirectory *dir_sampled_respcorr =
-	dir_sampled->mkdir("Response_Corrections");
+    TDirectory *dir_sampled_respcorr
+	= dir_sampled->mkdir("Response_Corrections");
     TDirectory *dir_sampled_nocorr = dir_sampled->mkdir("No_Corrections");
 
     dir_selected_nocorr->cd();
     h_balance_sel_nocorr->Write();
     h_Eratio_vs_Eta_sel_nocorr->Write();
+    h_Eratio_all_sel_nocorr->Write();
+    h_Eratio_HB_sel_nocorr->Write();
+    h_Eratio_HE_sel_nocorr->Write();
     h_Et_sel_nocorr->Write();
     h_Eta_sel_nocorr->Write();
     h_Phi_sel_nocorr->Write();
@@ -219,6 +266,9 @@ int main(int argc, char *argv[])
     dir_selected_respcorr->cd();
     h_balance_sel_respcorr->Write();
     h_Eratio_vs_Eta_sel_respcorr->Write();
+    h_Eratio_HB_sel_respcorr->Write();
+    h_Eratio_HE_sel_respcorr->Write();
+    h_Eratio_all_sel_respcorr->Write();
     h_Et_sel_respcorr->Write();
     h_Eta_sel_respcorr->Write();
     h_Phi_sel_respcorr->Write();
@@ -229,6 +279,9 @@ int main(int argc, char *argv[])
     dir_sampled_nocorr->cd();
     h_balance_samp_nocorr->Write();
     h_Eratio_vs_Eta_samp_nocorr->Write();
+    h_Eratio_all_samp_nocorr->Write();
+    h_Eratio_HB_samp_nocorr->Write();
+    h_Eratio_HE_samp_nocorr->Write();
     h_Et_samp_nocorr->Write();
     h_Eta_samp_nocorr->Write();
     h_Phi_samp_nocorr->Write();
@@ -239,6 +292,9 @@ int main(int argc, char *argv[])
     dir_sampled_respcorr->cd();
     h_balance_samp_respcorr->Write();
     h_Eratio_vs_Eta_samp_respcorr->Write();
+    h_Eratio_all_samp_respcorr->Write();
+    h_Eratio_HB_samp_respcorr->Write();
+    h_Eratio_HE_samp_respcorr->Write();
     h_Et_samp_respcorr->Write();
     h_Eta_samp_respcorr->Write();
     h_Phi_samp_respcorr->Write();
