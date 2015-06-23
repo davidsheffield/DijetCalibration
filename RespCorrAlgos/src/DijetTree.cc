@@ -560,7 +560,7 @@ void DijetTree::Loop(DijetRespCorrData *data, TH1D *h_PassSel,
 //    ientry for TTree::GetEntry and TBranch::GetEntry
     if (fChain == 0) return;
 
-    Long64_t nentries = fChain->GetEntriesFast();
+    Long64_t nentries = fChain->GetEntries();
     cout << "Running over " << nentries << " events" << endl;
 
     TRandom3 rand;
