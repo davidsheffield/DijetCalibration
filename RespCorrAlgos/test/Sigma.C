@@ -6,6 +6,9 @@
 //
 //******************************************//
 
+#ifndef _DIJETCALIBRATION_RESPCORRALGOS_SIGMA_C_
+#define _DIJETCALIBRATION_RESPCORRALGOS_SIGMA_C_
+
 Double_t calc_effSigma(TH1 * hist)
 {
   using std::cout;
@@ -95,3 +98,5 @@ Double_t calc_effSigma(TH1 * hist)
   return widmin;
 
 }
+
+#endif

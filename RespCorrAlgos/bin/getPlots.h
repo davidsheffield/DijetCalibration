@@ -13,5 +13,8 @@
 #include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrDatum.h"
 #include "DijetCalibration/RespCorrAlgos/interface/DijetRespCorrData.h"
 #include "DijetCalibration/RespCorrAlgos/interface/DijetTree.h"
+#include "DijetCalibration/RespCorrAlgos/test/Sigma.C"
+
+double getGaussianSigma(TH1D*);
 
 #endif

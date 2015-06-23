@@ -238,17 +238,126 @@ int main(int argc, char *argv[])
 	static_cast<TH1D*>(h_Eratio_vs_Eta_samp_respcorr->ProjectionY(
 			       "", 129, 161)->Clone()));
 
+    TTree *resolution_tree = new TTree("resolution_tree",
+				       "Resoltions of E_{reco}/E_{gen}");
+    double rms_sel_nocorr = 0.0;
+    double gaus_sel_nocorr = 0.0;
+    double eff_sel_nocorr = 0.0;
+    double ave_sel_nocorr = 0.0;
+    double rms_sel_respcorr = 0.0;
+    double gaus_sel_respcorr = 0.0;
+    double eff_sel_respcorr = 0.0;
+    double ave_sel_respcorr = 0.0;
+    double rms_samp_nocorr = 0.0;
+    double gaus_samp_nocorr = 0.0;
+    double eff_samp_nocorr = 0.0;
+    double ave_samp_nocorr = 0.0;
+    double rms_samp_respcorr = 0.0;
+    double gaus_samp_respcorr = 0.0;
+    double eff_samp_respcorr = 0.0;
+    double ave_samp_respcorr = 0.0;
+
+    resolution_tree->Branch("rms_sel_nocorr", &rms_sel_nocorr,
+			    "rms_sel_nocorr/D");
+    resolution_tree->Branch("gaus_sel_nocorr", &gaus_sel_nocorr,
+			    "gaus_sel_nocorr/D");
+    resolution_tree->Branch("eff_sel_nocorr", &eff_sel_nocorr,
+			    "eff_sel_nocorr/D");
+    resolution_tree->Branch("ave_sel_nocorr", &ave_sel_nocorr,
+			    "ave_sel_nocorr/D");
+    resolution_tree->Branch("rms_sel_respcorr", &rms_sel_respcorr,
+			    "rms_sel_respcorr/D");
+    resolution_tree->Branch("gaus_sel_respcorr", &gaus_sel_respcorr,
+			    "gaus_sel_respcorr/D");
+    resolution_tree->Branch("eff_sel_respcorr", &eff_sel_respcorr,
+			    "eff_sel_respcorr/D");
+    resolution_tree->Branch("ave_sel_respcorr", &ave_sel_respcorr,
+			    "ave_sel_respcorr/D");
+    resolution_tree->Branch("rms_samp_nocorr", &rms_samp_nocorr,
+			    "rms_samp_nocorr/D");
+    resolution_tree->Branch("gaus_samp_nocorr", &gaus_samp_nocorr,
+			    "gaus_samp_nocorr/D");
+    resolution_tree->Branch("eff_samp_nocorr", &eff_samp_nocorr,
+			    "eff_samp_nocorr/D");
+    resolution_tree->Branch("ave_samp_nocorr", &ave_samp_nocorr,
+			    "ave_samp_nocorr/D");
+    resolution_tree->Branch("rms_samp_respcorr", &rms_samp_respcorr,
+			    "rms_samp_respcorr/D");
+    resolution_tree->Branch("gaus_samp_respcorr", &gaus_samp_respcorr,
+			    "gaus_samp_respcorr/D");
+    resolution_tree->Branch("eff_samp_respcorr", &eff_samp_respcorr,
+			    "eff_samp_respcorr/D");
+    resolution_tree->Branch("ave_samp_respcorr", &ave_samp_respcorr,
+			    "ave_samp_respcorr/D");
+
+    rms_sel_nocorr = h_Eratio_all_sel_nocorr->GetRMS();
+    rms_sel_respcorr = h_Eratio_all_sel_respcorr->GetRMS();
+    rms_samp_nocorr = h_Eratio_all_samp_nocorr->GetRMS();
+    rms_samp_respcorr = h_Eratio_all_samp_respcorr->GetRMS();
+    gaus_sel_nocorr = getGaussianSigma(h_Eratio_all_sel_nocorr);
+    gaus_sel_respcorr = getGaussianSigma(h_Eratio_all_sel_respcorr);
+    gaus_samp_nocorr = getGaussianSigma(h_Eratio_all_samp_nocorr);
+    gaus_samp_respcorr = getGaussianSigma(h_Eratio_all_samp_respcorr);
+    eff_sel_nocorr = calc_effSigma(h_Eratio_all_sel_nocorr);
+    eff_sel_respcorr = calc_effSigma(h_Eratio_all_sel_respcorr);
+    eff_samp_nocorr = calc_effSigma(h_Eratio_all_samp_nocorr);
+    eff_samp_respcorr = calc_effSigma(h_Eratio_all_samp_respcorr);
+    ave_sel_nocorr = h_Eratio_all_sel_nocorr->GetMean();
+    ave_sel_respcorr = h_Eratio_all_sel_respcorr->GetMean();
+    ave_samp_nocorr = h_Eratio_all_samp_nocorr->GetMean();
+    ave_samp_respcorr = h_Eratio_all_samp_respcorr->GetMean();
+    resolution_tree->Fill();
+
+    rms_sel_nocorr = h_Eratio_HB_sel_nocorr->GetRMS();
+    rms_sel_respcorr = h_Eratio_HB_sel_respcorr->GetRMS();
+    rms_samp_nocorr = h_Eratio_HB_samp_nocorr->GetRMS();
+    rms_samp_respcorr = h_Eratio_HB_samp_respcorr->GetRMS();
+    gaus_sel_nocorr = getGaussianSigma(h_Eratio_HB_sel_nocorr);
+    gaus_sel_respcorr = getGaussianSigma(h_Eratio_HB_sel_respcorr);
+    gaus_samp_nocorr = getGaussianSigma(h_Eratio_HB_samp_nocorr);
+    gaus_samp_respcorr = getGaussianSigma(h_Eratio_HB_samp_respcorr);
+    eff_sel_nocorr = calc_effSigma(h_Eratio_HB_sel_nocorr);
+    eff_sel_respcorr = calc_effSigma(h_Eratio_HB_sel_respcorr);
+    eff_samp_nocorr = calc_effSigma(h_Eratio_HB_samp_nocorr);
+    eff_samp_respcorr = calc_effSigma(h_Eratio_HB_samp_respcorr);
+    ave_sel_nocorr = h_Eratio_HB_sel_nocorr->GetMean();
+    ave_sel_respcorr = h_Eratio_HB_sel_respcorr->GetMean();
+    ave_samp_nocorr = h_Eratio_HB_samp_nocorr->GetMean();
+    ave_samp_respcorr = h_Eratio_HB_samp_respcorr->GetMean();
+    resolution_tree->Fill();
+
+    rms_sel_nocorr = h_Eratio_HE_sel_nocorr->GetRMS();
+    rms_sel_respcorr = h_Eratio_HE_sel_respcorr->GetRMS();
+    rms_samp_nocorr = h_Eratio_HE_samp_nocorr->GetRMS();
+    rms_samp_respcorr = h_Eratio_HE_samp_respcorr->GetRMS();
+    gaus_sel_nocorr = getGaussianSigma(h_Eratio_HE_sel_nocorr);
+    gaus_sel_respcorr = getGaussianSigma(h_Eratio_HE_sel_respcorr);
+    gaus_samp_nocorr = getGaussianSigma(h_Eratio_HE_samp_nocorr);
+    gaus_samp_respcorr = getGaussianSigma(h_Eratio_HE_samp_respcorr);
+    eff_sel_nocorr = calc_effSigma(h_Eratio_HE_sel_nocorr);
+    eff_sel_respcorr = calc_effSigma(h_Eratio_HE_sel_respcorr);
+    eff_samp_nocorr = calc_effSigma(h_Eratio_HE_samp_nocorr);
+    eff_samp_respcorr = calc_effSigma(h_Eratio_HE_samp_respcorr);
+    ave_sel_nocorr = h_Eratio_HE_sel_nocorr->GetMean();
+    ave_sel_respcorr = h_Eratio_HE_sel_respcorr->GetMean();
+    ave_samp_nocorr = h_Eratio_HE_samp_nocorr->GetMean();
+    ave_samp_respcorr = h_Eratio_HE_samp_respcorr->GetMean();
+    resolution_tree->Fill();
+
     TFile *fout = new TFile(output_name, "RECREATE");
+    fout->cd();
+
+    resolution_tree->Write();
 
     TDirectory *dir_selected = fout->mkdir("Selected");
+    TDirectory *dir_selected_nocorr = dir_selected->mkdir("No_Corrections");
     TDirectory *dir_selected_respcorr
 	= dir_selected->mkdir("Response_Corrections");
-    TDirectory *dir_selected_nocorr = dir_selected->mkdir("No_Corrections");
 
     TDirectory *dir_sampled = fout->mkdir("Sampled");
+    TDirectory *dir_sampled_nocorr = dir_sampled->mkdir("No_Corrections");
     TDirectory *dir_sampled_respcorr
 	= dir_sampled->mkdir("Response_Corrections");
-    TDirectory *dir_sampled_nocorr = dir_sampled->mkdir("No_Corrections");
 
     dir_selected_nocorr->cd();
     h_balance_sel_nocorr->Write();
@@ -305,4 +414,11 @@ int main(int argc, char *argv[])
     fout->Close();
 
     return 0;
+}
+
+double getGaussianSigma(TH1D *h)
+{
+    TH1D *histogram = static_cast<TH1D*>(h->Clone());
+    TFitResultPtr fit = histogram->Fit("gaus", "S");
+    return fit->Parameter(2);
 }
