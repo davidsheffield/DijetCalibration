@@ -53,7 +53,8 @@ int main(int argc, char *argv[])
     cout << maxAlpha << endl;
     cout << initial_seed << endl;
 
-    DijetRespCorrData data;
+    DijetRespCorrData data_selected;
+    DijetRespCorrData data_sampled;
 
     TH1D *h_PassSel = new TH1D("h_PassSelection", "Selection Pass Failures",
 			       256, -0.5, 255.5);
@@ -72,17 +73,21 @@ int main(int argc, char *argv[])
 	cout << "Opening " << inputs[i] << endl;
 	TChain *tree = new TChain("dijettree");
 	tree->Add(inputs[i]);
-	DijetTree dijettree(tree, isMC);
-	dijettree.SetCuts(maxDeltaEta, minSumJetEt, minJetEt,
-			  maxThirdJetEt, maxAlpha);
-	dijettree.Loop(&data, h_PassSel, seed, probability[i]);
+
+	DijetTree dijet_selected(tree, isMC);
+	dijet_selected.SetCuts(maxDeltaEta, minSumJetEt, minJetEt,
+			       maxThirdJetEt, maxAlpha);
+	dijet_selected.Loop(&data_selected, h_PassSel, seed, probability[i]);
+
+	DijetTree dijet_sampled(tree, isMC);
+	dijet_sampled.SetCuts(1000.0, 0.0, 0.0, 1000.0, 1000.0);
+	dijet_sampled.Loop(&data_sampled, h_PassSel, seed, probability[i]);
+
 
 	++seed;
     }
 
-    cout << data.GetSize() << " data" << endl;
-
-    data.SetDoCandTrackEnergyDiff(false);
+    cout << data_selected.GetSize() << " data selected" << endl;
 
     TH1D *h_respcorr_init = new TH1D("h_respcorr_init",
 				     "responce corrections of 1",
@@ -91,30 +96,27 @@ int main(int argc, char *argv[])
 	h_respcorr_init->SetBinContent(i, 1.0);
     }
 
-    data.SetPlotBalance("h_balance_nocorr", "dijet balance", 200, -2.0, 2.0);
-    data.SetPlotEratiovsEta("h_Eratio_vs_Eta_nocorr",
-			    "E_{reco}/E_{gen} vs. #eta",
-			    200, -5.0, 5.0, 200, 0.0, 2.0);
-    data.SetPlotEt("h_Et_nocorr", "E_{T}", 200, 0.0, 400.0);
-    data.SetPlotEta("h_Eta_nocorr", "#eta", 200, -5.0, 5.0);
-    data.SetPlotPhi("h_Phi_nocorr", "#phi", 200, -3.1416, 3.1416);
-    data.SetPlotDEta("h_dEta_nocorr", "#Delta|#eta|", 200, 0.0, 1.5);
-    data.SetPlotDPhi("h_dPhi_nocorr", "#Delta#phi", 200, 0, 3.1416);
-    data.SetPlotEt2overEt1("h_Et2_over_Et1_nocorr", "E_{T,2}/E_{T,1}",
-			   200, 0.0, 1.0);
-//    TH2D *h_balance_term_vs_weight = new TH2D("tmp", "tmp", 10, 0.0, 10.0,
-//					      10, 0.0, 10.0);
-    data.GetPlots(h_respcorr_init);
-// h_balance, h_Eratio_vs_Eta,
-// 		  h_balance_term_vs_weight);
-    TH1D *h_balance_nocorr = data.GetPlotBalance();
-    TH2D *h_Eratio_vs_Eta_nocorr = data.GetPlotEratiovsEta();
-    TH1D *h_Et_nocorr = data.GetPlotEt();
-    TH1D *h_Eta_nocorr = data.GetPlotEta();
-    TH1D *h_Phi_nocorr = data.GetPlotPhi();
-    TH1D *h_dEta_nocorr = data.GetPlotDEta();
-    TH1D *h_dPhi_nocorr = data.GetPlotDPhi();
-    TH1D *h_Et2_over_Et1_nocorr = data.GetPlotEt2overEt1();
+    // Selected events, no corrections
+    data_selected.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
+    data_selected.SetPlotEratiovsEta("h_Eratio_vs_Eta",
+				     "E_{reco}/E_{gen} vs. #eta",
+				     200, -5.0, 5.0, 200, 0.0, 2.0);
+    data_selected.SetPlotEt("h_Et", "E_{T}", 200, 0.0, 400.0);
+    data_selected.SetPlotEta("h_Eta", "#eta", 200, -5.0, 5.0);
+    data_selected.SetPlotPhi("h_Phi", "#phi", 200, -3.1416, 3.1416);
+    data_selected.SetPlotDEta("h_dEta", "#Delta|#eta|", 200, 0.0, 1.5);
+    data_selected.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
+    data_selected.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
+				    200, 0.0, 1.0);
+    data_selected.GetPlots(h_respcorr_init);
+    TH1D *h_balance_sel_nocorr = data_selected.GetPlotBalance();
+    TH2D *h_Eratio_vs_Eta_sel_nocorr = data_selected.GetPlotEratiovsEta();
+    TH1D *h_Et_sel_nocorr = data_selected.GetPlotEt();
+    TH1D *h_Eta_sel_nocorr = data_selected.GetPlotEta();
+    TH1D *h_Phi_sel_nocorr = data_selected.GetPlotPhi();
+    TH1D *h_dEta_sel_nocorr = data_selected.GetPlotDEta();
+    TH1D *h_dPhi_sel_nocorr = data_selected.GetPlotDPhi();
+    TH1D *h_Et2_over_Et1_sel_nocorr = data_selected.GetPlotEt2overEt1();
 
     TH1D *h_respcorr;
     input->GetObject("h_corr", h_respcorr);
@@ -123,50 +125,126 @@ int main(int argc, char *argv[])
 	    h_respcorr->SetBinContent(i, 1.0);
     }
 
-    double factor = data.GetRespCorrScaleFactor(h_respcorr);
+    double factor = data_selected.GetRespCorrScaleFactor(h_respcorr);
     h_respcorr->Scale(factor);
 
-    data.SetPlotBalance("h_balance_respcorr", "dijet balance", 200, -2.0, 2.0);
-    data.SetPlotEratiovsEta("h_Eratio_vs_Eta_respcorr",
-			    "E_{reco}/E_{gen} vs. #eta",
-			    200, -5.0, 5.0, 200, 0.0, 2.0);
-    data.SetPlotEt("h_Et_respcorr", "E_{T}", 200, 0.0, 400.0);
-    data.SetPlotEta("h_Eta_respcorr", "#eta", 200, -5.0, 5.0);
-    data.SetPlotPhi("h_Phi_respcorr", "#phi", 200, -3.1416, 3.1416);
-    data.SetPlotDEta("h_dEta_respcorr", "#Delta|#eta|", 200, 0.0, 1.5);
-    data.SetPlotDPhi("h_dPhi_respcorr", "#Delta#phi", 200, 0, 3.1416);
-    data.SetPlotEt2overEt1("h_Et2_over_Et1_respcorr", "E_{T,2}/E_{T,1}",
-			   200, 0.0, 1.0);
-    data.GetPlots(h_respcorr);
-    TH1D *h_balance_respcorr = data.GetPlotBalance();
-    TH2D *h_Eratio_vs_Eta_respcorr = data.GetPlotEratiovsEta();
-    TH1D *h_Et_respcorr = data.GetPlotEt();
-    TH1D *h_Eta_respcorr = data.GetPlotEta();
-    TH1D *h_Phi_respcorr = data.GetPlotPhi();
-    TH1D *h_dEta_respcorr = data.GetPlotDEta();
-    TH1D *h_dPhi_respcorr = data.GetPlotDPhi();
-    TH1D *h_Et2_over_Et1_respcorr = data.GetPlotEt2overEt1();
+    // Selected events, with response corrections
+    data_selected.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
+    data_selected.SetPlotEratiovsEta("h_Eratio_vs_Eta",
+				     "E_{reco}/E_{gen} vs. #eta",
+				     200, -5.0, 5.0, 200, 0.0, 2.0);
+    data_selected.SetPlotEt("h_Et", "E_{T}", 200, 0.0, 400.0);
+    data_selected.SetPlotEta("h_Eta", "#eta", 200, -5.0, 5.0);
+    data_selected.SetPlotPhi("h_Phi", "#phi", 200, -3.1416, 3.1416);
+    data_selected.SetPlotDEta("h_dEta", "#Delta|#eta|", 200, 0.0, 1.5);
+    data_selected.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
+    data_selected.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
+				    200, 0.0, 1.0);
+    data_selected.GetPlots(h_respcorr);
+    TH1D *h_balance_sel_respcorr = data_selected.GetPlotBalance();
+    TH2D *h_Eratio_vs_Eta_sel_respcorr = data_selected.GetPlotEratiovsEta();
+    TH1D *h_Et_sel_respcorr = data_selected.GetPlotEt();
+    TH1D *h_Eta_sel_respcorr = data_selected.GetPlotEta();
+    TH1D *h_Phi_sel_respcorr = data_selected.GetPlotPhi();
+    TH1D *h_dEta_sel_respcorr = data_selected.GetPlotDEta();
+    TH1D *h_dPhi_sel_respcorr = data_selected.GetPlotDPhi();
+    TH1D *h_Et2_over_Et1_sel_respcorr = data_selected.GetPlotEt2overEt1();
+
+    // Sampled events, no corrections
+    data_sampled.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
+    data_sampled.SetPlotEratiovsEta("h_Eratio_vs_Eta",
+				    "E_{reco}/E_{gen} vs. #eta",
+				    200, -5.0, 5.0, 200, 0.0, 2.0);
+    data_sampled.SetPlotEt("h_Et", "E_{T}", 200, 0.0, 400.0);
+    data_sampled.SetPlotEta("h_Eta", "#eta", 200, -5.0, 5.0);
+    data_sampled.SetPlotPhi("h_Phi", "#phi", 200, -3.1416, 3.1416);
+    data_sampled.SetPlotDEta("h_dEta", "#Delta|#eta|", 200, 0.0, 1.5);
+    data_sampled.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
+    data_sampled.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
+				   200, 0.0, 1.0);
+    data_sampled.GetPlots(h_respcorr_init);
+    TH1D *h_balance_samp_nocorr = data_sampled.GetPlotBalance();
+    TH2D *h_Eratio_vs_Eta_samp_nocorr = data_sampled.GetPlotEratiovsEta();
+    TH1D *h_Et_samp_nocorr = data_sampled.GetPlotEt();
+    TH1D *h_Eta_samp_nocorr = data_sampled.GetPlotEta();
+    TH1D *h_Phi_samp_nocorr = data_sampled.GetPlotPhi();
+    TH1D *h_dEta_samp_nocorr = data_sampled.GetPlotDEta();
+    TH1D *h_dPhi_samp_nocorr = data_sampled.GetPlotDPhi();
+    TH1D *h_Et2_over_Et1_samp_nocorr = data_sampled.GetPlotEt2overEt1();
+
+    // Sampled events, with response corrections
+    data_sampled.SetPlotBalance("h_balance", "dijet balance", 200, -2.0, 2.0);
+    data_sampled.SetPlotEratiovsEta("h_Eratio_vs_Eta",
+				    "E_{reco}/E_{gen} vs. #eta",
+				    200, -5.0, 5.0, 200, 0.0, 2.0);
+    data_sampled.SetPlotEt("h_Et", "E_{T}", 200, 0.0, 400.0);
+    data_sampled.SetPlotEta("h_Eta", "#eta", 200, -5.0, 5.0);
+    data_sampled.SetPlotPhi("h_Phi", "#phi", 200, -3.1416, 3.1416);
+    data_sampled.SetPlotDEta("h_dEta", "#Delta|#eta|", 200, 0.0, 1.5);
+    data_sampled.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
+    data_sampled.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
+				   200, 0.0, 1.0);
+    data_sampled.GetPlots(h_respcorr);
+    TH1D *h_balance_samp_respcorr = data_sampled.GetPlotBalance();
+    TH2D *h_Eratio_vs_Eta_samp_respcorr = data_sampled.GetPlotEratiovsEta();
+    TH1D *h_Et_samp_respcorr = data_sampled.GetPlotEt();
+    TH1D *h_Eta_samp_respcorr = data_sampled.GetPlotEta();
+    TH1D *h_Phi_samp_respcorr = data_sampled.GetPlotPhi();
+    TH1D *h_dEta_samp_respcorr = data_sampled.GetPlotDEta();
+    TH1D *h_dPhi_samp_respcorr = data_sampled.GetPlotDPhi();
+    TH1D *h_Et2_over_Et1_samp_respcorr = data_sampled.GetPlotEt2overEt1();
 
     TFile *fout = new TFile(output_name, "RECREATE");
-    fout->cd();
 
-    h_balance_nocorr->Write();
-    h_Eratio_vs_Eta_nocorr->Write();
-    h_Et_nocorr->Write();
-    h_Eta_nocorr->Write();
-    h_Phi_nocorr->Write();
-    h_dEta_nocorr->Write();
-    h_dPhi_nocorr->Write();
-    h_Et2_over_Et1_nocorr->Write();
+    TDirectory *dir_selected = fout->mkdir("Selected");
+    TDirectory *dir_selected_respcorr =
+	dir_selected->mkdir("Response_Corrections");
+    TDirectory *dir_selected_nocorr = dir_selected->mkdir("No_Corrections");
 
-    h_balance_respcorr->Write();
-    h_Eratio_vs_Eta_respcorr->Write();
-    h_Et_respcorr->Write();
-    h_Eta_respcorr->Write();
-    h_Phi_respcorr->Write();
-    h_dEta_respcorr->Write();
-    h_dPhi_respcorr->Write();
-    h_Et2_over_Et1_respcorr->Write();
+    TDirectory *dir_sampled = fout->mkdir("Sampled");
+    TDirectory *dir_sampled_respcorr =
+	dir_sampled->mkdir("Response_Corrections");
+    TDirectory *dir_sampled_nocorr = dir_sampled->mkdir("No_Corrections");
+
+    dir_selected_nocorr->cd();
+    h_balance_sel_nocorr->Write();
+    h_Eratio_vs_Eta_sel_nocorr->Write();
+    h_Et_sel_nocorr->Write();
+    h_Eta_sel_nocorr->Write();
+    h_Phi_sel_nocorr->Write();
+    h_dEta_sel_nocorr->Write();
+    h_dPhi_sel_nocorr->Write();
+    h_Et2_over_Et1_sel_nocorr->Write();
+
+    dir_selected_respcorr->cd();
+    h_balance_sel_respcorr->Write();
+    h_Eratio_vs_Eta_sel_respcorr->Write();
+    h_Et_sel_respcorr->Write();
+    h_Eta_sel_respcorr->Write();
+    h_Phi_sel_respcorr->Write();
+    h_dEta_sel_respcorr->Write();
+    h_dPhi_sel_respcorr->Write();
+    h_Et2_over_Et1_sel_respcorr->Write();
+
+    dir_sampled_nocorr->cd();
+    h_balance_samp_nocorr->Write();
+    h_Eratio_vs_Eta_samp_nocorr->Write();
+    h_Et_samp_nocorr->Write();
+    h_Eta_samp_nocorr->Write();
+    h_Phi_samp_nocorr->Write();
+    h_dEta_samp_nocorr->Write();
+    h_dPhi_samp_nocorr->Write();
+    h_Et2_over_Et1_samp_nocorr->Write();
+
+    dir_sampled_respcorr->cd();
+    h_balance_samp_respcorr->Write();
+    h_Eratio_vs_Eta_samp_respcorr->Write();
+    h_Et_samp_respcorr->Write();
+    h_Eta_samp_respcorr->Write();
+    h_Phi_samp_respcorr->Write();
+    h_dEta_samp_respcorr->Write();
+    h_dPhi_samp_respcorr->Write();
+    h_Et2_over_Et1_samp_respcorr->Write();
 
     fout->Close();
 
