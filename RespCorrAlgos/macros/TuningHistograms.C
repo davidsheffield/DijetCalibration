@@ -4,12 +4,12 @@
 // author: David G. Sheffield (Rutgers)
 //
 
-void GetPlots(const int, const TString[], double[]);
+void GetPlots(TDirectory*, const int, const TString[], double[]);
 double GetImprovement(const double, const double);
 double GetNormImprovement(const double, const double, const double,
 			  const double);
 
-void TuningPlots()
+void TuningHistograms()
 {
     const int num_files_dEta = 10;
     TString files_dEta[num_files_dEta] =
@@ -54,19 +54,26 @@ void TuningPlots()
     const int num_files_alpha = 7;
     TString files_alpha[num_files_alpha] =
 {"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p05.root",
-"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p1.root",
-"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p15.root",
-"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p2.root",
-"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p25.root",
-"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p3.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p1.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p15.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p2.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p25.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p3.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p5.root"};
 
-GetPlots(num_files_dEta, files_dEta, bins_dEta);
+    TString output = "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/tuning_histograms.root";
+    TFile *fout = new TFile(output, "RECREATE");
+
+    TDirectory *dir_dEta = fout->mkdir("dEta");
+    GetPlots(dir_dEta, num_files_dEta, files_dEta, bins_dEta);
+
+    fout->Close();
 
     return;
 }
 
-void GetPlots(const int num_files, const TString files[100], double bins[101])
+void GetPlots(TDirectory *dir, const int num_files, const TString files[100],
+	      double bins[101])
 {
     // RMS
     TH1D *h_rms_sel_all = new TH1D("h_rms_sel_all", "Improvment",
@@ -320,10 +327,43 @@ void GetPlots(const int num_files, const TString files[100], double bins[101])
 	file->Close();
     }
 
-    TCanvas *c1 = new TCanvas("c1", "", 800, 600);
-    c1->cd();
-    h_rms_sel_all->SetMarkerStyle(20);
-    h_rms_sel_all->Draw("p");
+    dir->cd();
+    h_rms_sel_all->Write();
+    h_rms_sel_HB->Write();
+    h_rms_sel_HE->Write();
+    h_rms_sel_all_norm->Write();
+    h_rms_sel_HB_norm->Write();
+    h_rms_sel_HE_norm->Write();
+    h_rms_samp_all->Write();
+    h_rms_samp_HB->Write();
+    h_rms_samp_HE->Write();
+    h_rms_samp_all_norm->Write();
+    h_rms_samp_HB_norm->Write();
+    h_rms_samp_HE_norm->Write();
+    h_gaus_sel_all->Write();
+    h_gaus_sel_HB->Write();
+    h_gaus_sel_HE->Write();
+    h_gaus_sel_all_norm->Write();
+    h_gaus_sel_HB_norm->Write();
+    h_gaus_sel_HE_norm->Write();
+    h_gaus_samp_all->Write();
+    h_gaus_samp_HB->Write();
+    h_gaus_samp_HE->Write();
+    h_gaus_samp_all_norm->Write();
+    h_gaus_samp_HB_norm->Write();
+    h_gaus_samp_HE_norm->Write();
+    h_eff_sel_all->Write();
+    h_eff_sel_HB->Write();
+    h_eff_sel_HE->Write();
+    h_eff_sel_all_norm->Write();
+    h_eff_sel_HB_norm->Write();
+    h_eff_sel_HE_norm->Write();
+    h_eff_samp_all->Write();
+    h_eff_samp_HB->Write();
+    h_eff_samp_HE->Write();
+    h_eff_samp_all_norm->Write();
+    h_eff_samp_HB_norm->Write();
+    h_eff_samp_HE_norm->Write();
 
     return;
 }
