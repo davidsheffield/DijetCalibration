@@ -26,30 +26,36 @@ void TuningHistograms()
     double bins_dEta[num_files_dEta+1] = {0.05, 0.15, 0.25, 0.35, 0.45, 0.55,
 					  0.65, 0.75, 0.85, 0.95, 1.05};
 
-    const int num_files_sumEt = 10;
+    const int num_files_sumEt = 11;
     TString files_sumEt[num_files_sumEt] =
-{"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-15_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-110_Et-20_3rdEt-15_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-120_Et-20_3rdEt-15_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-140_Et-20_3rdEt-15_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-150_Et-20_3rdEt-15_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-50_Et-20_3rdEt-15_alpha-1000p0.root",
+{"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-50_Et-20_3rdEt-15_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-60_Et-20_3rdEt-15_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-70_Et-20_3rdEt-15_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-80_Et-20_3rdEt-15_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-90_Et-20_3rdEt-15_alpha-1000p0.root"};
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-90_Et-20_3rdEt-15_alpha-1000p0.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-15_alpha-1000p0.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-110_Et-20_3rdEt-15_alpha-1000p0.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-120_Et-20_3rdEt-15_alpha-1000p0.root",
+ "",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-140_Et-20_3rdEt-15_alpha-1000p0.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-150_Et-20_3rdEt-15_alpha-1000p0.root"};
+    double bins_sumEt[num_files_sumEt+1] = {45.0, 55.0, 65.0, 75.0, 85.0, 95.0,
+					    105.0, 115.0, 125.0, 135.0, 145.0,
+					    155.0};
 
     const int num_files_thirdEt = 9;
     TString files_thirdEt[num_files_thirdEt] =
-{"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-100_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-10_alpha-1000p0.root",
+{"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-5_alpha-1000p0.root",
+"/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-10_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-15_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-20_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-25_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-30_alpha-1000p0.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-50_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-5_alpha-1000p0.root",
- "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-75_alpha-1000p0.root"};
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-75_alpha-1000p0.root",
+ "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-100_alpha-1000p0.root"};
+    double bins_thirdEt[num_files_thirdEt+1] = {2.5, 7.5, 12.5, 17.5, 22.5,
+						27.5, 32.5, 67.5, 82.5, 117.5};
 
     const int num_files_alpha = 7;
     TString files_alpha[num_files_alpha] =
@@ -60,12 +66,24 @@ void TuningHistograms()
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p25.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p3.root",
  "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/histograms_dEta-0p5_sumEt-100_Et-20_3rdEt-1000_alpha-0p5.root"};
+    double bins_alpha[num_files_alpha+1] = {0.025, 0.075, 0.125, 0.175, 0.225,
+					    0.275, 0.325, 0.675};
 
     TString output = "/uscms_data/d1/dgsheffi/HCal/corrections/sampling/Tuning/tuning_histograms.root";
     TFile *fout = new TFile(output, "RECREATE");
 
     TDirectory *dir_dEta = fout->mkdir("dEta");
     GetPlots(dir_dEta, num_files_dEta, files_dEta, bins_dEta);
+
+    TDirectory *dir_sumEt = fout->mkdir("sumEt");
+    GetPlots(dir_sumEt, num_files_sumEt, files_sumEt, bins_sumEt);
+
+    TDirectory *dir_thirdEt = fout->mkdir("thirdEt");
+    GetPlots(dir_thirdEt, num_files_thirdEt, files_thirdEt, bins_thirdEt);
+
+    TDirectory *dir_alpha = fout->mkdir("alpha");
+    GetPlots(dir_alpha, num_files_alpha, files_alpha, bins_alpha);
+
 
     fout->Close();
 
@@ -154,6 +172,9 @@ void GetPlots(TDirectory *dir, const int num_files, const TString files[100],
 					num_files, bins);
 
     for (int i=0; i<num_files; ++i){
+	if (files[i] == "")
+	    continue;
+
 	TFile *file = new TFile(files[i], "READ");
 	TTree *tree = 0;
 	file->GetObject("resolution_tree", tree);
