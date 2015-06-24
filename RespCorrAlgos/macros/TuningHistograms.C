@@ -1,5 +1,5 @@
 //
-// TuningPlots.C
+// TuningHistograms.C
 //
 // author: David G. Sheffield (Rutgers)
 //
