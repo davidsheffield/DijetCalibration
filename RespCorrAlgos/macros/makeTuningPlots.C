@@ -14,6 +14,11 @@ void makeTuningPlots()
     TH1D *h_rms = 0;
     TH1D *h_gaus = 0;
     TH1D *h_eff = 0;
+
+    //////////////////////
+    // dEta selected
+    //////////////////////
+
     file->GetObject("dEta/h_rms_sel_all", h_rms);
     file->GetObject("dEta/h_gaus_sel_all", h_gaus);
     file->GetObject("dEta/h_eff_sel_all", h_eff);
@@ -21,7 +26,6 @@ void makeTuningPlots()
 		 "Selected events: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
 		 "#Delta|#eta| cut",
 		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_sel_all");
-
     file->GetObject("dEta/h_rms_sel_HB", h_rms);
     file->GetObject("dEta/h_gaus_sel_HB", h_gaus);
     file->GetObject("dEta/h_eff_sel_HB", h_eff);
@@ -29,7 +33,6 @@ void makeTuningPlots()
 		 "Selected events in HB: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
 		 "#Delta|#eta| cut",
 		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_sel_HB");
-
     file->GetObject("dEta/h_rms_sel_HE", h_rms);
     file->GetObject("dEta/h_gaus_sel_HE", h_gaus);
     file->GetObject("dEta/h_eff_sel_HE", h_eff);
@@ -37,6 +40,356 @@ void makeTuningPlots()
 		 "Selected events in HE: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
 		 "#Delta|#eta| cut",
 		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_sel_HE");
+    file->GetObject("dEta/h_rms_sel_all_norm", h_rms);
+    file->GetObject("dEta/h_gaus_sel_all_norm", h_gaus);
+    file->GetObject("dEta/h_eff_sel_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events, normalized: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_sel_all_norm");
+    file->GetObject("dEta/h_rms_sel_HB_norm", h_rms);
+    file->GetObject("dEta/h_gaus_sel_HB_norm", h_gaus);
+    file->GetObject("dEta/h_eff_sel_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB, normalized: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_sel_HB_norm");
+    file->GetObject("dEta/h_rms_sel_HE_norm", h_rms);
+    file->GetObject("dEta/h_gaus_sel_HE_norm", h_gaus);
+    file->GetObject("dEta/h_eff_sel_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE, normalized: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_sel_HE_norm");
+
+    //////////////////////
+    // dEta sampled
+    //////////////////////
+
+    file->GetObject("dEta/h_rms_samp_all", h_rms);
+    file->GetObject("dEta/h_gaus_samp_all", h_gaus);
+    file->GetObject("dEta/h_eff_samp_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_samp_all");
+    file->GetObject("dEta/h_rms_samp_HB", h_rms);
+    file->GetObject("dEta/h_gaus_samp_HB", h_gaus);
+    file->GetObject("dEta/h_eff_samp_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_samp_HB");
+    file->GetObject("dEta/h_rms_samp_HE", h_rms);
+    file->GetObject("dEta/h_gaus_samp_HE", h_gaus);
+    file->GetObject("dEta/h_eff_samp_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_samp_HE");
+    file->GetObject("dEta/h_rms_samp_all_norm", h_rms);
+    file->GetObject("dEta/h_gaus_samp_all_norm", h_gaus);
+    file->GetObject("dEta/h_eff_samp_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events, normalized: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_samp_all_norm");
+    file->GetObject("dEta/h_rms_samp_HB_norm", h_rms);
+    file->GetObject("dEta/h_gaus_samp_HB_norm", h_gaus);
+    file->GetObject("dEta/h_eff_samp_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB, normalized: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_samp_HB_norm");
+    file->GetObject("dEta/h_rms_samp_HE_norm", h_rms);
+    file->GetObject("dEta/h_gaus_samp_HE_norm", h_gaus);
+    file->GetObject("dEta/h_eff_samp_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE, normalized: E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "#Delta|#eta| cut",
+		 "tuning_dEta_sumEt-100_Et-20_3rdEt-15_alpha-1000_samp_HE_norm");
+
+    //////////////////////
+    // sumEt selected
+    //////////////////////
+
+    file->GetObject("sumEt/h_rms_sel_all", h_rms);
+    file->GetObject("sumEt/h_gaus_sel_all", h_gaus);
+    file->GetObject("sumEt/h_eff_sel_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_sel_all");
+    file->GetObject("sumEt/h_rms_sel_HB", h_rms);
+    file->GetObject("sumEt/h_gaus_sel_HB", h_gaus);
+    file->GetObject("sumEt/h_eff_sel_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_sel_HB");
+    file->GetObject("sumEt/h_rms_sel_HE", h_rms);
+    file->GetObject("sumEt/h_gaus_sel_HE", h_gaus);
+    file->GetObject("sumEt/h_eff_sel_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_sel_HE");
+    file->GetObject("sumEt/h_rms_sel_all_norm", h_rms);
+    file->GetObject("sumEt/h_gaus_sel_all_norm", h_gaus);
+    file->GetObject("sumEt/h_eff_sel_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events, normalized: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_sel_all_norm");
+    file->GetObject("sumEt/h_rms_sel_HB_norm", h_rms);
+    file->GetObject("sumEt/h_gaus_sel_HB_norm", h_gaus);
+    file->GetObject("sumEt/h_eff_sel_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB, normalized: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_sel_HB_norm");
+    file->GetObject("sumEt/h_rms_sel_HE_norm", h_rms);
+    file->GetObject("sumEt/h_gaus_sel_HE_norm", h_gaus);
+    file->GetObject("sumEt/h_eff_sel_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE, normalized: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_sel_HE_norm");
+
+    //////////////////////
+    // sumEt sampled
+    //////////////////////
+
+    file->GetObject("sumEt/h_rms_samp_all", h_rms);
+    file->GetObject("sumEt/h_gaus_samp_all", h_gaus);
+    file->GetObject("sumEt/h_eff_samp_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_samp_all");
+    file->GetObject("sumEt/h_rms_samp_HB", h_rms);
+    file->GetObject("sumEt/h_gaus_samp_HB", h_gaus);
+    file->GetObject("sumEt/h_eff_samp_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_samp_HB");
+    file->GetObject("sumEt/h_rms_samp_HE", h_rms);
+    file->GetObject("sumEt/h_gaus_samp_HE", h_gaus);
+    file->GetObject("sumEt/h_eff_samp_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_samp_HE");
+    file->GetObject("sumEt/h_rms_samp_all_norm", h_rms);
+    file->GetObject("sumEt/h_gaus_samp_all_norm", h_gaus);
+    file->GetObject("sumEt/h_eff_samp_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events, normalized: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_samp_all_norm");
+    file->GetObject("sumEt/h_rms_samp_HB_norm", h_rms);
+    file->GetObject("sumEt/h_gaus_samp_HB_norm", h_gaus);
+    file->GetObject("sumEt/h_eff_samp_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB, normalized: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_samp_HB_norm");
+    file->GetObject("sumEt/h_rms_samp_HE_norm", h_rms);
+    file->GetObject("sumEt/h_gaus_samp_HE_norm", h_gaus);
+    file->GetObject("sumEt/h_eff_samp_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE, normalized: #Delta|#eta| < 0.5, E_{T} > 20 GeV, E_{T}^{3rd} < 15 GeV",
+		 "E_{T}^{t} + E_{T}^{p} cut [GeV]",
+		 "tuning_sumEt_dEta-0p5_Et-20_3rdEt-15_alpha-1000_samp_HE_norm");
+
+    //////////////////////
+    // 3rdEt selected
+    //////////////////////
+
+    file->GetObject("thirdEt/h_rms_sel_all", h_rms);
+    file->GetObject("thirdEt/h_gaus_sel_all", h_gaus);
+    file->GetObject("thirdEt/h_eff_sel_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_sel_all");
+    file->GetObject("thirdEt/h_rms_sel_HB", h_rms);
+    file->GetObject("thirdEt/h_gaus_sel_HB", h_gaus);
+    file->GetObject("thirdEt/h_eff_sel_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_sel_HB");
+    file->GetObject("thirdEt/h_rms_sel_HE", h_rms);
+    file->GetObject("thirdEt/h_gaus_sel_HE", h_gaus);
+    file->GetObject("thirdEt/h_eff_sel_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_sel_HE");
+    file->GetObject("thirdEt/h_rms_sel_all_norm", h_rms);
+    file->GetObject("thirdEt/h_gaus_sel_all_norm", h_gaus);
+    file->GetObject("thirdEt/h_eff_sel_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_sel_all_norm");
+    file->GetObject("thirdEt/h_rms_sel_HB_norm", h_rms);
+    file->GetObject("thirdEt/h_gaus_sel_HB_norm", h_gaus);
+    file->GetObject("thirdEt/h_eff_sel_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_sel_HB_norm");
+    file->GetObject("thirdEt/h_rms_sel_HE_norm", h_rms);
+    file->GetObject("thirdEt/h_gaus_sel_HE_norm", h_gaus);
+    file->GetObject("thirdEt/h_eff_sel_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_sel_HE_norm");
+
+    //////////////////////
+    // 3rdEt sampled
+    //////////////////////
+
+    file->GetObject("thirdEt/h_rms_samp_all", h_rms);
+    file->GetObject("thirdEt/h_gaus_samp_all", h_gaus);
+    file->GetObject("thirdEt/h_eff_samp_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_samp_all");
+    file->GetObject("thirdEt/h_rms_samp_HB", h_rms);
+    file->GetObject("thirdEt/h_gaus_samp_HB", h_gaus);
+    file->GetObject("thirdEt/h_eff_samp_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_samp_HB");
+    file->GetObject("thirdEt/h_rms_samp_HE", h_rms);
+    file->GetObject("thirdEt/h_gaus_samp_HE", h_gaus);
+    file->GetObject("thirdEt/h_eff_samp_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_samp_HE");
+    file->GetObject("thirdEt/h_rms_samp_all_norm", h_rms);
+    file->GetObject("thirdEt/h_gaus_samp_all_norm", h_gaus);
+    file->GetObject("thirdEt/h_eff_samp_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_samp_all_norm");
+    file->GetObject("thirdEt/h_rms_samp_HB_norm", h_rms);
+    file->GetObject("thirdEt/h_gaus_samp_HB_norm", h_gaus);
+    file->GetObject("thirdEt/h_eff_samp_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_samp_HB_norm");
+    file->GetObject("thirdEt/h_rms_samp_HE_norm", h_rms);
+    file->GetObject("thirdEt/h_gaus_samp_HE_norm", h_gaus);
+    file->GetObject("thirdEt/h_eff_samp_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "E_{T}^{3rd} cut [GeV]",
+		 "tuning_3rdEt_dEta-0p5_sumEt-100_Et-20_alpha-1000_samp_HE_norm");
+
+    //////////////////////
+    // alpha selected
+    //////////////////////
+
+    file->GetObject("alpha/h_rms_sel_all", h_rms);
+    file->GetObject("alpha/h_gaus_sel_all", h_gaus);
+    file->GetObject("alpha/h_eff_sel_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_sel_all");
+    file->GetObject("alpha/h_rms_sel_HB", h_rms);
+    file->GetObject("alpha/h_gaus_sel_HB", h_gaus);
+    file->GetObject("alpha/h_eff_sel_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_sel_HB");
+    file->GetObject("alpha/h_rms_sel_HE", h_rms);
+    file->GetObject("alpha/h_gaus_sel_HE", h_gaus);
+    file->GetObject("alpha/h_eff_sel_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_sel_HE");
+    file->GetObject("alpha/h_rms_sel_all_norm", h_rms);
+    file->GetObject("alpha/h_gaus_sel_all_norm", h_gaus);
+    file->GetObject("alpha/h_eff_sel_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_sel_all_norm");
+    file->GetObject("alpha/h_rms_sel_HB_norm", h_rms);
+    file->GetObject("alpha/h_gaus_sel_HB_norm", h_gaus);
+    file->GetObject("alpha/h_eff_sel_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HB, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_sel_HB_norm");
+    file->GetObject("alpha/h_rms_sel_HE_norm", h_rms);
+    file->GetObject("alpha/h_gaus_sel_HE_norm", h_gaus);
+    file->GetObject("alpha/h_eff_sel_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "Selected events in HE, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_sel_HE_norm");
+
+    //////////////////////
+    // alpha sampled
+    //////////////////////
+
+    file->GetObject("alpha/h_rms_samp_all", h_rms);
+    file->GetObject("alpha/h_gaus_samp_all", h_gaus);
+    file->GetObject("alpha/h_eff_samp_all", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_samp_all");
+    file->GetObject("alpha/h_rms_samp_HB", h_rms);
+    file->GetObject("alpha/h_gaus_samp_HB", h_gaus);
+    file->GetObject("alpha/h_eff_samp_HB", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_samp_HB");
+    file->GetObject("alpha/h_rms_samp_HE", h_rms);
+    file->GetObject("alpha/h_gaus_samp_HE", h_gaus);
+    file->GetObject("alpha/h_eff_samp_HE", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_samp_HE");
+    file->GetObject("alpha/h_rms_samp_all_norm", h_rms);
+    file->GetObject("alpha/h_gaus_samp_all_norm", h_gaus);
+    file->GetObject("alpha/h_eff_samp_all_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_samp_all_norm");
+    file->GetObject("alpha/h_rms_samp_HB_norm", h_rms);
+    file->GetObject("alpha/h_gaus_samp_HB_norm", h_gaus);
+    file->GetObject("alpha/h_eff_samp_HB_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HB, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_samp_HB_norm");
+    file->GetObject("alpha/h_rms_samp_HE_norm", h_rms);
+    file->GetObject("alpha/h_gaus_samp_HE_norm", h_gaus);
+    file->GetObject("alpha/h_eff_samp_HE_norm", h_eff);
+    makeCanvases(h_rms, h_gaus, h_eff,
+		 "All sampled events in HE, normalized: #Delta|#eta| < 0.5, E_{T}^{t} + E_{T}^{p} > 100 GeV, E_{T} > 20 GeV",
+		 "#alpha cut",
+		 "tuning_alpha_dEta-0p5_sumEt-100_Et-20_3rdEt-15_samp_HE_norm");
 
     return;
 }
