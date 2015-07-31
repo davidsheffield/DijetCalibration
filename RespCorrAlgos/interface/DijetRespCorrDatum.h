@@ -57,6 +57,7 @@ public:
     Double_t GetProbeGenE() const;
     Double_t GetThirdJetPx(void) const;
     Double_t GetThirdJetPy(void) const;
+    Int_t    GetPrimaryVertices() const;
     Int_t    GetCandTrackN(void) const;
 
     void SetWeight(Double_t);
@@ -74,6 +75,7 @@ public:
     void SetProbeGenE(Double_t);
     void SetThirdJetPx(Double_t);
     void SetThirdJetPy(Double_t);
+    void SetPrimaryVertices(Int_t);
     void SetCandTrackN(Int_t);
     void AddCandTrackP(Double_t);
     void AddCandTrackEcalE(Double_t);
@@ -109,6 +111,8 @@ private:
 
     // third jet info
     Double_t fThirdJetPx, fThirdJetPy;
+
+    Int_t fNPV;
 
     // Track energy comparison info
     Int_t fCandTrackN;

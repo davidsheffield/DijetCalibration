@@ -59,32 +59,49 @@ int main(int argc, char *argv[])
     TH1D *h_PassSel = new TH1D("h_PassSelection", "Selection Pass Failures",
 			       256, -0.5, 255.5);
 
-    TString inputs[6] =
+    if (isMC) {
+	TString inputs[6] =
 {"/eos/uscms/store/user/dgsheffi/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
  "/eos/uscms/store/user/dgsheffi/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
  "/eos/uscms/store/user/dgsheffi/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
  "/eos/uscms/store/user/dgsheffi/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
  "/eos/uscms/store/user/dgsheffi/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root",
  "/eos/uscms/store/user/dgsheffi/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/DijetCalibration_dEta-1p5_sumEt-50_Et-20_3rdEt-100/5c7aa9a575a3633aed507656e4d402e2/tree_*.root"};
-    double probability[6] = {1.0, 1.372714e-1, 2.805324e-2, 4.675765e-3,
+	double probability[6] = {1.0, 1.372714e-1, 2.805324e-2, 4.675765e-3,
 				 1.175536e-3, 9.256953e-5};
-    int seed = initial_seed;
-    for (int i=0; i<6; ++i) {
-	cout << "Opening " << inputs[i] << endl;
+	int seed = initial_seed;
+	for (int i=0; i<6; ++i) {
+	    cout << "Opening " << inputs[i] << endl;
+	    TChain *tree = new TChain("dijettree");
+	    tree->Add(inputs[i]);
+
+	    DijetTree dijet_selected(tree, isMC);
+	    dijet_selected.SetCuts(maxDeltaEta, minSumJetEt, minJetEt,
+				   maxThirdJetEt, maxAlpha);
+	    dijet_selected.Loop(&data_selected, h_PassSel, seed,
+				probability[i]);
+
+	    DijetTree dijet_sampled(tree, isMC);
+	    dijet_sampled.SetCuts(1000.0, 0.0, 0.0, 1000.0, 1000.0);
+	    dijet_sampled.Loop(&data_sampled, h_PassSel, seed, probability[i]);
+
+
+	    ++seed;
+	}
+    } else {
+	TString input = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-HcalCalDijets-PromptReco-v1/150729_184622/0000/dijet_balance_ntuple_*.root";
+	cout << "Opening " << input << endl;
 	TChain *tree = new TChain("dijettree");
-	tree->Add(inputs[i]);
+	tree->Add(input);
 
 	DijetTree dijet_selected(tree, isMC);
 	dijet_selected.SetCuts(maxDeltaEta, minSumJetEt, minJetEt,
 			       maxThirdJetEt, maxAlpha);
-	dijet_selected.Loop(&data_selected, h_PassSel, seed, probability[i]);
+	dijet_selected.Loop(&data_selected, h_PassSel, 0, 1.0);
 
 	DijetTree dijet_sampled(tree, isMC);
 	dijet_sampled.SetCuts(1000.0, 0.0, 0.0, 1000.0, 1000.0);
-	dijet_sampled.Loop(&data_sampled, h_PassSel, seed, probability[i]);
-
-
-	++seed;
+	dijet_sampled.Loop(&data_sampled, h_PassSel, 0, 1.0);
     }
 
     cout << data_selected.GetSize() << " data selected" << endl;
@@ -108,6 +125,7 @@ int main(int argc, char *argv[])
     data_selected.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
     data_selected.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
 				    200, 0.0, 1.0);
+    data_selected.SetPlotNPV("h_NPV", "Primary vertices", 50, -0.5, 49.5);
     data_selected.GetPlots(h_respcorr_init);
     TH1D *h_balance_sel_nocorr = data_selected.GetPlotBalance();
     TH2D *h_Eratio_vs_Eta_sel_nocorr = data_selected.GetPlotEratiovsEta();
@@ -117,6 +135,7 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_sel_nocorr = data_selected.GetPlotDEta();
     TH1D *h_dPhi_sel_nocorr = data_selected.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_sel_nocorr = data_selected.GetPlotEt2overEt1();
+    TH1D *h_NPV_sel_nocorr = data_selected.GetPlotNPV();
     TH1D *h_Eratio_all_sel_nocorr = static_cast<TH1D*>(
 	h_Eratio_vs_Eta_sel_nocorr->ProjectionY("h_Eratio_all")->Clone());
     TH1D *h_Eratio_HB_sel_nocorr = static_cast<TH1D*>(
@@ -151,6 +170,7 @@ int main(int argc, char *argv[])
     data_selected.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
     data_selected.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
 				    200, 0.0, 1.0);
+    data_selected.SetPlotNPV("h_NPV", "Primary vertices", 50, -0.5, 49.5);
     data_selected.GetPlots(h_respcorr);
     TH1D *h_balance_sel_respcorr = data_selected.GetPlotBalance();
     TH2D *h_Eratio_vs_Eta_sel_respcorr = data_selected.GetPlotEratiovsEta();
@@ -160,6 +180,7 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_sel_respcorr = data_selected.GetPlotDEta();
     TH1D *h_dPhi_sel_respcorr = data_selected.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_sel_respcorr = data_selected.GetPlotEt2overEt1();
+    TH1D *h_NPV_sel_respcorr = data_selected.GetPlotNPV();
     TH1D *h_Eratio_all_sel_respcorr = static_cast<TH1D*>(
 	h_Eratio_vs_Eta_sel_respcorr->ProjectionY("h_Eratio_all")->Clone());
     TH1D *h_Eratio_HB_sel_respcorr = static_cast<TH1D*>(
@@ -184,6 +205,7 @@ int main(int argc, char *argv[])
     data_sampled.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
     data_sampled.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
 				   200, 0.0, 1.0);
+    data_sampled.SetPlotNPV("h_NPV", "Primary vertices", 50, -0.5, 49.5);
     data_sampled.GetPlots(h_respcorr_init);
     TH1D *h_balance_samp_nocorr = data_sampled.GetPlotBalance();
     TH2D *h_Eratio_vs_Eta_samp_nocorr = data_sampled.GetPlotEratiovsEta();
@@ -193,6 +215,7 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_samp_nocorr = data_sampled.GetPlotDEta();
     TH1D *h_dPhi_samp_nocorr = data_sampled.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_samp_nocorr = data_sampled.GetPlotEt2overEt1();
+    TH1D *h_NPV_samp_nocorr = data_sampled.GetPlotNPV();
     TH1D *h_Eratio_all_samp_nocorr = static_cast<TH1D*>(
 	h_Eratio_vs_Eta_samp_nocorr->ProjectionY("h_Eratio_all")->Clone());
     TH1D *h_Eratio_HB_samp_nocorr = static_cast<TH1D*>(
@@ -217,6 +240,7 @@ int main(int argc, char *argv[])
     data_sampled.SetPlotDPhi("h_dPhi", "#Delta#phi", 200, 0, 3.1416);
     data_sampled.SetPlotEt2overEt1("h_Et2_over_Et1", "E_{T,2}/E_{T,1}",
 				   200, 0.0, 1.0);
+    data_sampled.SetPlotNPV("h_NPV", "Primary vertices", 50, -0.5, 49.5);
     data_sampled.GetPlots(h_respcorr);
     TH1D *h_balance_samp_respcorr = data_sampled.GetPlotBalance();
     TH2D *h_Eratio_vs_Eta_samp_respcorr = data_sampled.GetPlotEratiovsEta();
@@ -226,6 +250,7 @@ int main(int argc, char *argv[])
     TH1D *h_dEta_samp_respcorr = data_sampled.GetPlotDEta();
     TH1D *h_dPhi_samp_respcorr = data_sampled.GetPlotDPhi();
     TH1D *h_Et2_over_Et1_samp_respcorr = data_sampled.GetPlotEt2overEt1();
+    TH1D *h_NPV_samp_respcorr = data_sampled.GetPlotNPV();
     TH1D *h_Eratio_all_samp_respcorr = static_cast<TH1D*>(
 	h_Eratio_vs_Eta_samp_respcorr->ProjectionY("h_Eratio_all")->Clone());
     TH1D *h_Eratio_HB_samp_respcorr = static_cast<TH1D*>(
@@ -240,114 +265,117 @@ int main(int argc, char *argv[])
 
     TTree *resolution_tree = new TTree("resolution_tree",
 				       "Resoltions of E_{reco}/E_{gen}");
-    double rms_sel_nocorr = 0.0;
-    double gaus_sel_nocorr = 0.0;
-    double eff_sel_nocorr = 0.0;
-    double ave_sel_nocorr = 0.0;
-    double rms_sel_respcorr = 0.0;
-    double gaus_sel_respcorr = 0.0;
-    double eff_sel_respcorr = 0.0;
-    double ave_sel_respcorr = 0.0;
-    double rms_samp_nocorr = 0.0;
-    double gaus_samp_nocorr = 0.0;
-    double eff_samp_nocorr = 0.0;
-    double ave_samp_nocorr = 0.0;
-    double rms_samp_respcorr = 0.0;
-    double gaus_samp_respcorr = 0.0;
-    double eff_samp_respcorr = 0.0;
-    double ave_samp_respcorr = 0.0;
+    if (isMC) {
+	double rms_sel_nocorr = 0.0;
+	double gaus_sel_nocorr = 0.0;
+	double eff_sel_nocorr = 0.0;
+	double ave_sel_nocorr = 0.0;
+	double rms_sel_respcorr = 0.0;
+	double gaus_sel_respcorr = 0.0;
+	double eff_sel_respcorr = 0.0;
+	double ave_sel_respcorr = 0.0;
+	double rms_samp_nocorr = 0.0;
+	double gaus_samp_nocorr = 0.0;
+	double eff_samp_nocorr = 0.0;
+	double ave_samp_nocorr = 0.0;
+	double rms_samp_respcorr = 0.0;
+	double gaus_samp_respcorr = 0.0;
+	double eff_samp_respcorr = 0.0;
+	double ave_samp_respcorr = 0.0;
 
-    resolution_tree->Branch("rms_sel_nocorr", &rms_sel_nocorr,
-			    "rms_sel_nocorr/D");
-    resolution_tree->Branch("gaus_sel_nocorr", &gaus_sel_nocorr,
-			    "gaus_sel_nocorr/D");
-    resolution_tree->Branch("eff_sel_nocorr", &eff_sel_nocorr,
-			    "eff_sel_nocorr/D");
-    resolution_tree->Branch("ave_sel_nocorr", &ave_sel_nocorr,
-			    "ave_sel_nocorr/D");
-    resolution_tree->Branch("rms_sel_respcorr", &rms_sel_respcorr,
-			    "rms_sel_respcorr/D");
-    resolution_tree->Branch("gaus_sel_respcorr", &gaus_sel_respcorr,
-			    "gaus_sel_respcorr/D");
-    resolution_tree->Branch("eff_sel_respcorr", &eff_sel_respcorr,
-			    "eff_sel_respcorr/D");
-    resolution_tree->Branch("ave_sel_respcorr", &ave_sel_respcorr,
-			    "ave_sel_respcorr/D");
-    resolution_tree->Branch("rms_samp_nocorr", &rms_samp_nocorr,
-			    "rms_samp_nocorr/D");
-    resolution_tree->Branch("gaus_samp_nocorr", &gaus_samp_nocorr,
-			    "gaus_samp_nocorr/D");
-    resolution_tree->Branch("eff_samp_nocorr", &eff_samp_nocorr,
-			    "eff_samp_nocorr/D");
-    resolution_tree->Branch("ave_samp_nocorr", &ave_samp_nocorr,
-			    "ave_samp_nocorr/D");
-    resolution_tree->Branch("rms_samp_respcorr", &rms_samp_respcorr,
-			    "rms_samp_respcorr/D");
-    resolution_tree->Branch("gaus_samp_respcorr", &gaus_samp_respcorr,
-			    "gaus_samp_respcorr/D");
-    resolution_tree->Branch("eff_samp_respcorr", &eff_samp_respcorr,
-			    "eff_samp_respcorr/D");
-    resolution_tree->Branch("ave_samp_respcorr", &ave_samp_respcorr,
-			    "ave_samp_respcorr/D");
+	resolution_tree->Branch("rms_sel_nocorr", &rms_sel_nocorr,
+				"rms_sel_nocorr/D");
+	resolution_tree->Branch("gaus_sel_nocorr", &gaus_sel_nocorr,
+				"gaus_sel_nocorr/D");
+	resolution_tree->Branch("eff_sel_nocorr", &eff_sel_nocorr,
+				"eff_sel_nocorr/D");
+	resolution_tree->Branch("ave_sel_nocorr", &ave_sel_nocorr,
+				"ave_sel_nocorr/D");
+	resolution_tree->Branch("rms_sel_respcorr", &rms_sel_respcorr,
+				"rms_sel_respcorr/D");
+	resolution_tree->Branch("gaus_sel_respcorr", &gaus_sel_respcorr,
+				"gaus_sel_respcorr/D");
+	resolution_tree->Branch("eff_sel_respcorr", &eff_sel_respcorr,
+				"eff_sel_respcorr/D");
+	resolution_tree->Branch("ave_sel_respcorr", &ave_sel_respcorr,
+				"ave_sel_respcorr/D");
+	resolution_tree->Branch("rms_samp_nocorr", &rms_samp_nocorr,
+				"rms_samp_nocorr/D");
+	resolution_tree->Branch("gaus_samp_nocorr", &gaus_samp_nocorr,
+				"gaus_samp_nocorr/D");
+	resolution_tree->Branch("eff_samp_nocorr", &eff_samp_nocorr,
+				"eff_samp_nocorr/D");
+	resolution_tree->Branch("ave_samp_nocorr", &ave_samp_nocorr,
+				"ave_samp_nocorr/D");
+	resolution_tree->Branch("rms_samp_respcorr", &rms_samp_respcorr,
+				"rms_samp_respcorr/D");
+	resolution_tree->Branch("gaus_samp_respcorr", &gaus_samp_respcorr,
+				"gaus_samp_respcorr/D");
+	resolution_tree->Branch("eff_samp_respcorr", &eff_samp_respcorr,
+				"eff_samp_respcorr/D");
+	resolution_tree->Branch("ave_samp_respcorr", &ave_samp_respcorr,
+				"ave_samp_respcorr/D");
 
-    rms_sel_nocorr = h_Eratio_all_sel_nocorr->GetRMS();
-    rms_sel_respcorr = h_Eratio_all_sel_respcorr->GetRMS();
-    rms_samp_nocorr = h_Eratio_all_samp_nocorr->GetRMS();
-    rms_samp_respcorr = h_Eratio_all_samp_respcorr->GetRMS();
-    gaus_sel_nocorr = getGaussianSigma(h_Eratio_all_sel_nocorr);
-    gaus_sel_respcorr = getGaussianSigma(h_Eratio_all_sel_respcorr);
-    gaus_samp_nocorr = getGaussianSigma(h_Eratio_all_samp_nocorr);
-    gaus_samp_respcorr = getGaussianSigma(h_Eratio_all_samp_respcorr);
-    eff_sel_nocorr = calc_effSigma(h_Eratio_all_sel_nocorr);
-    eff_sel_respcorr = calc_effSigma(h_Eratio_all_sel_respcorr);
-    eff_samp_nocorr = calc_effSigma(h_Eratio_all_samp_nocorr);
-    eff_samp_respcorr = calc_effSigma(h_Eratio_all_samp_respcorr);
-    ave_sel_nocorr = h_Eratio_all_sel_nocorr->GetMean();
-    ave_sel_respcorr = h_Eratio_all_sel_respcorr->GetMean();
-    ave_samp_nocorr = h_Eratio_all_samp_nocorr->GetMean();
-    ave_samp_respcorr = h_Eratio_all_samp_respcorr->GetMean();
-    resolution_tree->Fill();
+	rms_sel_nocorr = h_Eratio_all_sel_nocorr->GetRMS();
+	rms_sel_respcorr = h_Eratio_all_sel_respcorr->GetRMS();
+	rms_samp_nocorr = h_Eratio_all_samp_nocorr->GetRMS();
+	rms_samp_respcorr = h_Eratio_all_samp_respcorr->GetRMS();
+	gaus_sel_nocorr = getGaussianSigma(h_Eratio_all_sel_nocorr);
+	gaus_sel_respcorr = getGaussianSigma(h_Eratio_all_sel_respcorr);
+	gaus_samp_nocorr = getGaussianSigma(h_Eratio_all_samp_nocorr);
+	gaus_samp_respcorr = getGaussianSigma(h_Eratio_all_samp_respcorr);
+	eff_sel_nocorr = calc_effSigma(h_Eratio_all_sel_nocorr);
+	eff_sel_respcorr = calc_effSigma(h_Eratio_all_sel_respcorr);
+	eff_samp_nocorr = calc_effSigma(h_Eratio_all_samp_nocorr);
+	eff_samp_respcorr = calc_effSigma(h_Eratio_all_samp_respcorr);
+	ave_sel_nocorr = h_Eratio_all_sel_nocorr->GetMean();
+	ave_sel_respcorr = h_Eratio_all_sel_respcorr->GetMean();
+	ave_samp_nocorr = h_Eratio_all_samp_nocorr->GetMean();
+	ave_samp_respcorr = h_Eratio_all_samp_respcorr->GetMean();
+	resolution_tree->Fill();
 
-    rms_sel_nocorr = h_Eratio_HB_sel_nocorr->GetRMS();
-    rms_sel_respcorr = h_Eratio_HB_sel_respcorr->GetRMS();
-    rms_samp_nocorr = h_Eratio_HB_samp_nocorr->GetRMS();
-    rms_samp_respcorr = h_Eratio_HB_samp_respcorr->GetRMS();
-    gaus_sel_nocorr = getGaussianSigma(h_Eratio_HB_sel_nocorr);
-    gaus_sel_respcorr = getGaussianSigma(h_Eratio_HB_sel_respcorr);
-    gaus_samp_nocorr = getGaussianSigma(h_Eratio_HB_samp_nocorr);
-    gaus_samp_respcorr = getGaussianSigma(h_Eratio_HB_samp_respcorr);
-    eff_sel_nocorr = calc_effSigma(h_Eratio_HB_sel_nocorr);
-    eff_sel_respcorr = calc_effSigma(h_Eratio_HB_sel_respcorr);
-    eff_samp_nocorr = calc_effSigma(h_Eratio_HB_samp_nocorr);
-    eff_samp_respcorr = calc_effSigma(h_Eratio_HB_samp_respcorr);
-    ave_sel_nocorr = h_Eratio_HB_sel_nocorr->GetMean();
-    ave_sel_respcorr = h_Eratio_HB_sel_respcorr->GetMean();
-    ave_samp_nocorr = h_Eratio_HB_samp_nocorr->GetMean();
-    ave_samp_respcorr = h_Eratio_HB_samp_respcorr->GetMean();
-    resolution_tree->Fill();
+	rms_sel_nocorr = h_Eratio_HB_sel_nocorr->GetRMS();
+	rms_sel_respcorr = h_Eratio_HB_sel_respcorr->GetRMS();
+	rms_samp_nocorr = h_Eratio_HB_samp_nocorr->GetRMS();
+	rms_samp_respcorr = h_Eratio_HB_samp_respcorr->GetRMS();
+	gaus_sel_nocorr = getGaussianSigma(h_Eratio_HB_sel_nocorr);
+	gaus_sel_respcorr = getGaussianSigma(h_Eratio_HB_sel_respcorr);
+	gaus_samp_nocorr = getGaussianSigma(h_Eratio_HB_samp_nocorr);
+	gaus_samp_respcorr = getGaussianSigma(h_Eratio_HB_samp_respcorr);
+	eff_sel_nocorr = calc_effSigma(h_Eratio_HB_sel_nocorr);
+	eff_sel_respcorr = calc_effSigma(h_Eratio_HB_sel_respcorr);
+	eff_samp_nocorr = calc_effSigma(h_Eratio_HB_samp_nocorr);
+	eff_samp_respcorr = calc_effSigma(h_Eratio_HB_samp_respcorr);
+	ave_sel_nocorr = h_Eratio_HB_sel_nocorr->GetMean();
+	ave_sel_respcorr = h_Eratio_HB_sel_respcorr->GetMean();
+	ave_samp_nocorr = h_Eratio_HB_samp_nocorr->GetMean();
+	ave_samp_respcorr = h_Eratio_HB_samp_respcorr->GetMean();
+	resolution_tree->Fill();
 
-    rms_sel_nocorr = h_Eratio_HE_sel_nocorr->GetRMS();
-    rms_sel_respcorr = h_Eratio_HE_sel_respcorr->GetRMS();
-    rms_samp_nocorr = h_Eratio_HE_samp_nocorr->GetRMS();
-    rms_samp_respcorr = h_Eratio_HE_samp_respcorr->GetRMS();
-    gaus_sel_nocorr = getGaussianSigma(h_Eratio_HE_sel_nocorr);
-    gaus_sel_respcorr = getGaussianSigma(h_Eratio_HE_sel_respcorr);
-    gaus_samp_nocorr = getGaussianSigma(h_Eratio_HE_samp_nocorr);
-    gaus_samp_respcorr = getGaussianSigma(h_Eratio_HE_samp_respcorr);
-    eff_sel_nocorr = calc_effSigma(h_Eratio_HE_sel_nocorr);
-    eff_sel_respcorr = calc_effSigma(h_Eratio_HE_sel_respcorr);
-    eff_samp_nocorr = calc_effSigma(h_Eratio_HE_samp_nocorr);
-    eff_samp_respcorr = calc_effSigma(h_Eratio_HE_samp_respcorr);
-    ave_sel_nocorr = h_Eratio_HE_sel_nocorr->GetMean();
-    ave_sel_respcorr = h_Eratio_HE_sel_respcorr->GetMean();
-    ave_samp_nocorr = h_Eratio_HE_samp_nocorr->GetMean();
-    ave_samp_respcorr = h_Eratio_HE_samp_respcorr->GetMean();
-    resolution_tree->Fill();
+	rms_sel_nocorr = h_Eratio_HE_sel_nocorr->GetRMS();
+	rms_sel_respcorr = h_Eratio_HE_sel_respcorr->GetRMS();
+	rms_samp_nocorr = h_Eratio_HE_samp_nocorr->GetRMS();
+	rms_samp_respcorr = h_Eratio_HE_samp_respcorr->GetRMS();
+	gaus_sel_nocorr = getGaussianSigma(h_Eratio_HE_sel_nocorr);
+	gaus_sel_respcorr = getGaussianSigma(h_Eratio_HE_sel_respcorr);
+	gaus_samp_nocorr = getGaussianSigma(h_Eratio_HE_samp_nocorr);
+	gaus_samp_respcorr = getGaussianSigma(h_Eratio_HE_samp_respcorr);
+	eff_sel_nocorr = calc_effSigma(h_Eratio_HE_sel_nocorr);
+	eff_sel_respcorr = calc_effSigma(h_Eratio_HE_sel_respcorr);
+	eff_samp_nocorr = calc_effSigma(h_Eratio_HE_samp_nocorr);
+	eff_samp_respcorr = calc_effSigma(h_Eratio_HE_samp_respcorr);
+	ave_sel_nocorr = h_Eratio_HE_sel_nocorr->GetMean();
+	ave_sel_respcorr = h_Eratio_HE_sel_respcorr->GetMean();
+	ave_samp_nocorr = h_Eratio_HE_samp_nocorr->GetMean();
+	ave_samp_respcorr = h_Eratio_HE_samp_respcorr->GetMean();
+	resolution_tree->Fill();
+    }
 
     TFile *fout = new TFile(output_name, "RECREATE");
     fout->cd();
 
-    resolution_tree->Write();
+    if (isMC)
+	resolution_tree->Write();
 
     TDirectory *dir_selected = fout->mkdir("Selected");
     TDirectory *dir_selected_nocorr = dir_selected->mkdir("No_Corrections");
@@ -371,6 +399,7 @@ int main(int argc, char *argv[])
     h_dEta_sel_nocorr->Write();
     h_dPhi_sel_nocorr->Write();
     h_Et2_over_Et1_sel_nocorr->Write();
+    h_NPV_sel_nocorr->Write();
 
     dir_selected_respcorr->cd();
     h_balance_sel_respcorr->Write();
@@ -384,6 +413,7 @@ int main(int argc, char *argv[])
     h_dEta_sel_respcorr->Write();
     h_dPhi_sel_respcorr->Write();
     h_Et2_over_Et1_sel_respcorr->Write();
+    h_NPV_sel_respcorr->Write();
 
     dir_sampled_nocorr->cd();
     h_balance_samp_nocorr->Write();
@@ -397,6 +427,7 @@ int main(int argc, char *argv[])
     h_dEta_samp_nocorr->Write();
     h_dPhi_samp_nocorr->Write();
     h_Et2_over_Et1_samp_nocorr->Write();
+    h_NPV_samp_nocorr->Write();
 
     dir_sampled_respcorr->cd();
     h_balance_samp_respcorr->Write();
@@ -410,6 +441,7 @@ int main(int argc, char *argv[])
     h_dEta_samp_respcorr->Write();
     h_dPhi_samp_respcorr->Write();
     h_Et2_over_Et1_samp_respcorr->Write();
+    h_NPV_samp_respcorr->Write();
 
     fout->Close();
 

@@ -35,6 +35,7 @@ DijetRespCorrData::DijetRespCorrData()
     h_dEta = new TH1D("h_dEta", "", 1, 0.0, 1.0);
     h_dPhi = new TH1D("h_dPhi", "", 1, 0.0, 1.0);
     h_Et2_over_Et1 = new TH1D("h_Et2_over_Et1", "", 1, 0.0, 1.0);
+    h_NPV = new TH1D("h_NPV", "", 1, 0.0, 1.0);
 }
 
 DijetRespCorrData::~DijetRespCorrData() {}
@@ -153,6 +154,15 @@ void DijetRespCorrData::SetPlotEt2overEt1(const TString name,
     return;
 }
 
+void DijetRespCorrData::SetPlotNPV(const TString name, const TString label,
+				   const Int_t nbinsx, const Double_t xlow,
+				   const Double_t xup)
+{
+    delete h_NPV;
+    h_NPV = new TH1D(name, label, nbinsx, xlow, xup);
+    return;
+}
+
 TH1D* DijetRespCorrData::GetPlotBalance()
 {
     return static_cast<TH1D*>(h_balance->Clone());
@@ -193,6 +203,11 @@ TH1D* DijetRespCorrData::GetPlotEt2overEt1()
     return static_cast<TH1D*>(h_Et2_over_Et1->Clone());
 }
 
+TH1D* DijetRespCorrData::GetPlotNPV()
+{
+    return static_cast<TH1D*>(h_NPV->Clone());
+}
+
 void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
 {
     Double_t array[NUMTOWERS];
@@ -216,6 +231,7 @@ void DijetRespCorrData::GetPlots(TH1D *h_respcorr)
 	h_Phi->Fill(it->GetProbePhi(), it->GetWeight());
 	h_dEta->Fill(fabs(fabs(it->GetTagEta()) - fabs(it->GetProbeEta())),
 		     it->GetWeight());
+	h_NPV->Fill(it->GetPrimaryVertices(), it->GetWeight());
 	double dphi = fabs(it->GetTagPhi() - it->GetProbePhi());
 	if (dphi > 3.1415)
 	    dphi = 6.2832 - dphi;
@@ -368,7 +384,7 @@ TH1D* DijetRespCorrData::doFit(const char* name, const char* title)
 void DijetRespCorrData::doFit(TArrayD& respcorr, TArrayD& respcorre)
 {
     // setup the initial response corrections
-    const int maxIetaFixed = 1;//20;
+    const int maxIetaFixed = 0; //1//20;
     Double_t array[NUMTOWERS] = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,

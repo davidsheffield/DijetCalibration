@@ -588,6 +588,7 @@ void DijetTree::Loop(DijetRespCorrData *data, TH1D *h_PassSel,
 
 	// Fill datum
 	datum.SetWeight(weight);
+	datum.SetPrimaryVertices(NPV);
 
 	float sumt = 0;
 	datum.SetTagEta(tjet_eta);

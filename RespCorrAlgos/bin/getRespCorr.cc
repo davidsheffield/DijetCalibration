@@ -74,13 +74,13 @@ int main(int argc, char *argv[])
     int decimal2 = static_cast<int>(maxAlpha_*10)
 	         - static_cast<int>(maxAlpha_)*10;
     TString output =
-	"/uscms_data/d1/dgsheffi/HCal/corrections/2015/corrections_dEta-"
+	"/uscms_data/d1/dgsheffi/HCal/corrections/2015/corrections_Run2015B-HcalCalDijets-PromptReco-v1_dEta-"
 	+ to_string(static_cast<int>(maxDeltaEta_)) + "p" + to_string(decimal1)
 	+ "_sumEt-" + to_string(static_cast<int>(minSumJetEt_))
 	+ "_Et-" + to_string(static_cast<int>(minJetEt_))
 	+ "_3rdEt-" + to_string(static_cast<int>(maxThirdJetEt_))
 	+ "_alpha-" + to_string(static_cast<int>(maxAlpha_)) + "p"
-	+ to_string(decimal2) + "_DCSonly.root";
+	+ to_string(decimal2) + ".root";
     if (debug & 0x1)
 	output = "test.root";
 
@@ -137,22 +137,23 @@ int main(int argc, char *argv[])
 	    sampledEvents = data.GetSize();
 	}
     } else {
-	TString input1 = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-PromptReco-v1_v3/150714_202611/0000/dijet_balance_ntuple_*.root";
-	TString input2 = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-PromptReco-v1_v3/150714_202611/0001/dijet_balance_ntuple_*.root";
+	TString input = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-HcalCalDijets-PromptReco-v1/150729_184622/0000/dijet_balance_ntuple_*.root";
+	//TString input1 = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-PromptReco-v1_v3/150714_202611/0000/dijet_balance_ntuple_*.root";
+	//TString input2 = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-PromptReco-v1_v3/150714_202611/0001/dijet_balance_ntuple_*.root";
 	//TString input1 = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-PromptReco-v1_v3/150714_202611/0000/dijet_balance_ntuple_1.root";
 	//TString input2 = "/eos/uscms/store/user/dgsheffi/JetHT/crab_DijetCalibration_JetHT_Run2015B-PromptReco-v1_v3/150714_202611/0001/dijet_balance_ntuple_1000.root";
 	TChain *tree = new TChain("dijettree");
-	cout << "Opening " << input1 << endl;
-	tree->Add(input1);
-	cout << "Opening " << input2 << endl;
-	tree->Add(input2);
+	cout << "Opening " << input << endl;
+	tree->Add(input);
+	//cout << "Opening " << input2 << endl;
+	//tree->Add(input2);
 	DijetTree dijettree(tree);
 	dijettree.SetCuts(maxDeltaEta_, minSumJetEt_, minJetEt_, maxThirdJetEt_,
 			  maxAlpha_);
-	dijettree.Loop(&data, h_PassSel, 0, 1);
+	dijettree.Loop(&data, h_PassSel, 0, 1.0);
 
-	dataset_name = input1;
-	dataset_prob = 1;
+	dataset_name = input;
+	dataset_prob = 1.0;
 	dataset_seed = 0;
 	dataset_events = data.GetSize();
 	datasets_tree->Fill();

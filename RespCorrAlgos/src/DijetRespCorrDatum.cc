@@ -100,6 +100,11 @@ Double_t DijetRespCorrDatum::GetThirdJetPy(void) const
     return fThirdJetPy;
 }
 
+Int_t DijetRespCorrDatum::GetPrimaryVertices() const
+{
+    return fNPV;
+}
+
 Int_t DijetRespCorrDatum::GetCandTrackN(void) const
 {
     return fCandTrackN;
@@ -196,6 +201,12 @@ void DijetRespCorrDatum::SetThirdJetPx(Double_t v)
 void DijetRespCorrDatum::SetThirdJetPy(Double_t v)
 {
     fThirdJetPy = v;
+    return;
+}
+
+void DijetRespCorrDatum::SetPrimaryVertices(Int_t v)
+{
+    fNPV = v;
     return;
 }
 

@@ -91,6 +91,8 @@ public:
 		     const Double_t, const Double_t);
     void SetPlotEt2overEt1(const TString, const TString, const Int_t,
 			   const Double_t, const Double_t);
+    void SetPlotNPV(const TString, const TString, const Int_t, const Double_t,
+		    const Double_t);
     TH1D* GetPlotBalance();
     TH2D* GetPlotEratiovsEta();
     TH1D* GetPlotEt();
@@ -99,6 +101,7 @@ public:
     TH1D* GetPlotDEta();
     TH1D* GetPlotDPhi();
     TH1D* GetPlotEt2overEt1();
+    TH1D* GetPlotNPV();
 
 private:
     // calculate the balance parameter and its resolution for a given dijet pair
@@ -136,6 +139,7 @@ private:
     TH1D *h_dEta;
     TH1D *h_dPhi;
     TH1D *h_Et2_over_Et1;
+    TH1D *h_NPV;
 
     ClassDef(DijetRespCorrData, 1);
 };
