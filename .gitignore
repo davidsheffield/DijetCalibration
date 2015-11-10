@@ -4,3 +4,4 @@ __init__.py
 *.so
 *.d
 AutoDict_*
+*.root

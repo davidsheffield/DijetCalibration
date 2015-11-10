@@ -12,13 +12,13 @@ dijetcalibration = cms.EDAnalyzer(
     hoRecHitName        = cms.string('horeco'),
     pvCollName          = cms.string('offlinePrimaryVertices'),
     rootHistFilename    = cms.string('dijettree.root'),
-    maxDeltaEta         = cms.double(1.5),
+    maxDeltaEta         = cms.double(1.0),
     minTagJetEta        = cms.double(0.0),
     maxTagJetEta        = cms.double(5.0),
-    minSumJetEt         = cms.double(50.0),
+    minSumJetEt         = cms.double(70.0),
     minJetEt            = cms.double(20.0),
-    maxThirdJetEt       = cms.double(100.0),
+    maxThirdJetEt       = cms.double(50.0),
     maxJetEMF           = cms.double(0.9),
     doGenJets           = cms.bool(True),
     debug               = cms.untracked.bool(False)
-    )
+)
